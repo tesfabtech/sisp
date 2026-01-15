@@ -1,19 +1,19 @@
-import Header from "@/components/organization/header";
 import Sidebar from "@/components/organization/sidebar";
-import OrganizationDashboard from "@/components/organization/overview";
+import Header from "@/components/organization/header";
+import Profile from "@/components/organization/profile";
 
-export default function OrganizationDashboardPage() {
+export default function ProfilePage() {
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Content */}
       <div className="flex flex-1 flex-col">
         <Header />
 
         <main className="flex-1 px-6 py-6">
-          <OrganizationDashboard />
+          <div className="mx-auto max-w-5xl">
+            <Profile />
+          </div>
         </main>
       </div>
     </div>

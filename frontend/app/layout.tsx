@@ -1,9 +1,5 @@
-import './globals.css';
-
-export const metadata = {
-  title: 'SISP – Sidama Innovation & Startup Portal',
-  description: 'Connecting startups, mentors, investors, and opportunities in Sidama',
-};
+import "./globals.css";
+import { ThemeProvider } from "next-themes";
 
 export default function RootLayout({
   children,
@@ -12,8 +8,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
-        {children}
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
