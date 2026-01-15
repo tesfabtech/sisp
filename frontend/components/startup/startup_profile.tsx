@@ -100,35 +100,39 @@ export default function StartupProfile() {
 
   /* ================= FETCH USER STARTUPS ================= */
   const fetchMyStartups = async () => {
-  if (!token) return alert('Not authenticated')
+    if (!token) return alert('Not authenticated')
 
-  try {
-    const res = await axios.get('/startups/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    try {
+      const res = await axios.get('/startups/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
 
-    setStartups(res.data)
-    setShowStartups(true)
-  } catch {
-    alert('Failed to fetch startups')
+      setStartups(res.data)
+      setShowStartups(true)
+    } catch {
+      alert('Failed to fetch startups')
+    }
   }
-}
-
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto p-4">
+    <div className="space-y-6 max-w-6xl mx-auto p-4 text-[#101828] dark:text-[#FAFAFA]">
+
       {/* ================= HEADER ================= */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-semibold">
             Startup Profile
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-[#6B7280]">
             Manage your startup details and visibility.
           </p>
         </div>
 
-        <Button variant="outline" onClick={fetchMyStartups}>
+        <Button
+          variant="outline"
+          className="border-[#E2E8F0] dark:border-[#1F2937]"
+          onClick={fetchMyStartups}
+        >
           See Startups
         </Button>
       </div>
@@ -140,7 +144,7 @@ export default function StartupProfile() {
             {startups.map((startup) => (
               <Card
                 key={startup.id}
-                className="w-82.5 shrink-0 rounded-2xl overflow-hidden border border-gray-200/60 dark:border-white/10 bg-white dark:bg-[#0F172A] shadow-lg"
+                className="w-82.5 shrink-0 rounded-2xl overflow-hidden bg-white dark:bg-[#101828] border border-[#E2E8F0] dark:border-[#1F2937] shadow-lg"
               >
                 {/* Cover Image */}
                 <div className="relative h-47.5">
@@ -153,13 +157,13 @@ export default function StartupProfile() {
                       unoptimized
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                      <ImageIcon className="text-gray-400" />
+                    <div className="w-full h-full bg-[#EEF2F7] dark:bg-[#0B1220] flex items-center justify-center">
+                      <ImageIcon className="text-[#6B7280]" />
                     </div>
                   )}
 
                   <div className="absolute top-4 right-4">
-                    <span className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-green-500/90 text-white shadow">
+                    <span className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-[#14B8A6] text-white shadow">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Submitted
                     </span>
@@ -169,7 +173,7 @@ export default function StartupProfile() {
                 {/* Content */}
                 <div className="p-6">
                   <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-[#EEF2F7] dark:bg-[#0B1220]">
                       {startup.logo ? (
                         <Image
                           src={`http://localhost:8000/storage/${startup.logo}`}
@@ -179,30 +183,29 @@ export default function StartupProfile() {
                           unoptimized
                         />
                       ) : (
-                        <Building2 className="w-full h-full p-2 text-gray-400" />
+                        <Building2 className="w-full h-full p-2 text-[#6B7280]" />
                       )}
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    <h3 className="text-xl font-bold">
                       {startup.name}
                     </h3>
                   </div>
 
-                  <Badge className="mt-3 mb-4 bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
+                  <Badge className="mt-3 mb-4 bg-[#DBEAFE] text-[#1D4ED8] dark:bg-[#1E3A8A]/30 dark:text-[#93C5FD]">
                     {startup.industry || 'Startup'}
                   </Badge>
 
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">
+                  <p className="text-sm text-[#6B7280] leading-relaxed line-clamp-3">
                     {startup.tagline}
                   </p>
 
                   <Link href={`/dashboard/startup/${startup.id}`}>
-  <div className="mt-6 flex items-center text-blue-600 dark:text-blue-400 font-medium text-sm group cursor-pointer">
-    View Details
-    <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
-  </div>
-</Link>
-
+                    <div className="mt-6 flex items-center text-[#3B82F6] font-medium text-sm group cursor-pointer">
+                      View Details
+                      <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </Link>
                 </div>
               </Card>
             ))}
@@ -210,16 +213,15 @@ export default function StartupProfile() {
         </div>
       )}
 
-      {/* ================= FORM (UNCHANGED DESIGN) ================= */}
+      {/* ================= FORM ================= */}
 
       {/* Media */}
-      <Card>
+      <Card className="bg-white dark:bg-[#101828] border border-[#E2E8F0] dark:border-[#1F2937]">
         <CardContent className="p-6 space-y-6">
           <h3 className="font-medium">Media</h3>
 
-          {/* Cover Image */}
-          <div className="relative h-40 rounded-xl border border-dashed flex items-center justify-center">
-            <ImageIcon className="text-gray-400" />
+          <div className="relative h-40 rounded-xl border border-dashed border-[#E2E8F0] dark:border-[#1F2937] flex items-center justify-center">
+            <ImageIcon className="text-[#6B7280]" />
             <input
               type="file"
               className="absolute inset-0 opacity-0 cursor-pointer"
@@ -227,28 +229,31 @@ export default function StartupProfile() {
             />
           </div>
 
-          {/* Logo */}
           <div>
-           <input
-  type="file"
-  id="logo"
-  className="hidden"
-  onChange={(e) => setLogo(e.target.files?.[0] || null)}
-/>
+            <input
+              type="file"
+              id="logo"
+              className="hidden"
+              onChange={(e) => setLogo(e.target.files?.[0] || null)}
+            />
 
-<Button asChild variant="outline" size="sm">
-  <label htmlFor="logo" className="cursor-pointer flex items-center gap-2">
-    <Upload size={14} />
-    Upload Logo
-  </label>
-</Button>
-
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="border-[#E2E8F0] dark:border-[#1F2937]"
+            >
+              <label htmlFor="logo" className="cursor-pointer flex items-center gap-2">
+                <Upload size={14} />
+                Upload Logo
+              </label>
+            </Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Basic Info */}
-      <Card>
+      <Card className="bg-white dark:bg-[#101828] border border-[#E2E8F0] dark:border-[#1F2937]">
         <CardContent className="p-6 space-y-4">
           <Input name="name" placeholder="Startup Name" onChange={handleChange} />
           <Input name="website" placeholder="Website" onChange={handleChange} />
@@ -291,7 +296,7 @@ export default function StartupProfile() {
       </Card>
 
       {/* Problem & Solution */}
-      <Card>
+      <Card className="bg-white dark:bg-[#101828] border border-[#E2E8F0] dark:border-[#1F2937]">
         <CardContent className="p-6 space-y-4">
           <Textarea
             name="problem_statement"
@@ -307,18 +312,10 @@ export default function StartupProfile() {
       </Card>
 
       {/* Additional Details */}
-      <Card>
+      <Card className="bg-white dark:bg-[#101828] border border-[#E2E8F0] dark:border-[#1F2937]">
         <CardContent className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input
-            name="location"
-            placeholder="Location"
-            onChange={handleChange}
-          />
-          <Input
-            name="team_size"
-            placeholder="Team Size"
-            onChange={handleChange}
-          />
+          <Input name="location" placeholder="Location" onChange={handleChange} />
+          <Input name="team_size" placeholder="Team Size" onChange={handleChange} />
           <Input
             name="founded_year"
             placeholder="Founded Year"
@@ -332,7 +329,7 @@ export default function StartupProfile() {
         <Button
           onClick={handleSubmit}
           disabled={loading}
-          className="bg-blue-600 text-white"
+          className="bg-[#3B82F6] hover:bg-[#2563EB] text-white"
         >
           {loading ? 'Saving...' : 'Save Profile'}
         </Button>
