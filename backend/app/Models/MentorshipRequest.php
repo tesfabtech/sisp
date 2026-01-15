@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MentorshipStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,10 +16,15 @@ class MentorshipRequest extends Model
         'status',
     ];
 
+    protected $casts = [
+        'status' => MentorshipStatus::class,
+    ];
+
     public function mentor()
     {
         return $this->belongsTo(Mentor::class);
     }
+
 
     public function startup()
     {

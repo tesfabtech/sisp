@@ -229,17 +229,20 @@ export default function StartupProfile() {
 
           {/* Logo */}
           <div>
-            <input
-              type="file"
-              className="hidden"
-              id="logo"
-              onChange={(e) => setLogo(e.target.files?.[0] || null)}
-            />
-            <label htmlFor="logo">
-              <Button variant="outline" size="sm">
-                <Upload size={14} /> Upload Logo
-              </Button>
-            </label>
+           <input
+  type="file"
+  id="logo"
+  className="hidden"
+  onChange={(e) => setLogo(e.target.files?.[0] || null)}
+/>
+
+<Button asChild variant="outline" size="sm">
+  <label htmlFor="logo" className="cursor-pointer flex items-center gap-2">
+    <Upload size={14} />
+    Upload Logo
+  </label>
+</Button>
+
           </div>
         </CardContent>
       </Card>
