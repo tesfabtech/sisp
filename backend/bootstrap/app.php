@@ -12,9 +12,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->api([
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+        // ✅ Register route middleware aliases (Laravel 12 way)
+        $middleware->alias([
+            'admin.only' => \App\Http\Middleware\AdminOnly::class,
+            'superadmin.only' => \App\Http\Middleware\SuperAdminOnly::class,
         ]);
+
+        // API middleware (no throttle)
+        $middleware->api(
+            append: [
+                \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            ]
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {})
     ->create();
