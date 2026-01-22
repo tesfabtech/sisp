@@ -4,20 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Challenge extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'organization_id',
         'title',
+        'short_description', // new
         'description',
         'type',
         'deadline',
         'award',
-        'eligibility',
-        'status',
+        'status',            // updated enum: pending, open, cancelled, closed
+        'participant_number', // new
     ];
 
     protected $casts = [

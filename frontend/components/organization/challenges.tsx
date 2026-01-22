@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "@/lib/axios";
 import Sidebar from "@/components/organization/sidebar";
 import Header from "@/components/organization/header";
 import {
@@ -9,103 +11,163 @@ import {
   Users,
   DollarSign,
   Plus,
-  ArrowLeft,
+  Eye,
   Pencil,
   Trash2,
-  Eye,
 } from "lucide-react";
 
-/* ---------------- MOCK DATA ---------------- */
-
-const initialChallenges = [
-  {
-    id: "1",
-    title: "Green Energy Hackathon",
-    description: "Innovate sustainable energy solutions.",
-    deadline: "Apr 30, 2024",
-    reward: "$10,000",
-    participants: 250,
-    status: "approved",
-  },
-  {
-    id: "2",
-    title: "AI for Social Good",
-    description: "Use AI to solve social challenges.",
-    deadline: "May 15, 2024",
-    reward: "$5,000",
-    participants: 0,
-    status: "pending",
-  },
-];
-
 /* ---------------- STATUS COLORS ---------------- */
-
 const statusStyles: Record<string, string> = {
-  approved: "bg-[#14B8A6]/10 text-[#14B8A6]",
   pending: "bg-[#0EA5E9]/10 text-[#0EA5E9]",
-  draft: "bg-[#EEF2F6] text-[#475467]",
-  rejected: "bg-[#EF4444]/10 text-[#EF4444]",
+  open: "bg-[#14B8A6]/10 text-[#14B8A6]",
+  cancelled: "bg-[#EF4444]/10 text-[#EF4444]",
+  closed: "bg-[#6366F1]/10 text-[#6366F1]",
 };
 
-type Mode = "list" | "detail" | "edit";
+type Challenge = {
+  id: number;
+  title: string;
+  short_description?: string;
+  description?: string;
+  deadline?: string;
+  award?: string;
+  participant_number?: number;
+  type: string;
+  status: string;
+};
 
 export default function ChallengesPage() {
-  const [mode, setMode] = useState<Mode>("list");
-  const [challenges, setChallenges] = useState(initialChallenges);
-  const [selected, setSelected] = useState<any>(null);
+  const router = useRouter();
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  /* ---------------- HANDLERS ---------------- */
+  // Filters & Search
+  const [searchTitle, setSearchTitle] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
 
-  const openDetail = (challenge: any) => {
-    setSelected(challenge);
-    setMode("detail");
-  };
+  /* ---------------- FETCH FROM DATABASE ---------------- */
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const res = await axios.get("/organization/challenges");
+        setChallenges(res.data.data ?? res.data);
+      } catch (error) {
+        console.error("Failed to fetch challenges", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const openEdit = (challenge: any) => {
-    setSelected(challenge);
-    setMode("edit");
-  };
+    fetchChallenges();
+  }, []);
 
-  const saveEdit = () => {
-    setChallenges((prev) =>
-      prev.map((c) => (c.id === selected.id ? selected : c))
+  /* ---------------- FILTERED CHALLENGES ---------------- */
+  const filteredChallenges = challenges.filter((c) => {
+    return (
+      (!filterType || c.type === filterType) &&
+      (!filterStatus || c.status === filterStatus) &&
+      (!searchTitle || c.title.toLowerCase().includes(searchTitle.toLowerCase()))
     );
-    setMode("detail");
-  };
+  });
 
-  const deleteChallenge = (id: string) => {
-    setChallenges((prev) => prev.filter((c) => c.id !== id));
-    setMode("list");
+  /* ---------------- DELETE CHALLENGE ---------------- */
+  const deleteChallenge = async (id: number) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this challenge?"
+    );
+    if (!confirm) return;
+
+    try {
+      await axios.delete(`/organization/challenges/${id}`);
+      setChallenges((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.error("Failed to delete challenge", error);
+    }
   };
 
   /* ---------------- LAYOUT ---------------- */
-
   return (
     <div className="flex min-h-screen bg-[#F5F7FA] text-[#101828] dark:bg-[#0B1220] dark:text-white">
       <Sidebar />
-
       <div className="flex flex-1 flex-col">
         <Header />
 
         <main className="flex-1 px-6 py-6">
-          {/* ---------------- LIST VIEW ---------------- */}
-          {mode === "list" && (
-            <div className="mx-auto max-w-7xl space-y-6">
-              <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold">Challenges</h1>
+          <div className="mx-auto max-w-7xl space-y-6">
+            {/* Header + Create / Trash Buttons */}
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-semibold">Challenges</h1>
 
-                <button className="inline-flex items-center gap-2 rounded-xl bg-[#3B82F6] px-4 py-2 text-sm font-medium text-white">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() =>
+                    router.push("/dashboard/organization/challenges/trash")
+                  }
+                  title="View trashed challenges"
+                  className="inline-flex items-center justify-center rounded-xl border border-[#E4E7EC] p-2 text-[#475467] hover:bg-[#EEF2F6] dark:border-[#1F2937] dark:hover:bg-white/10"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+
+                <button
+                  onClick={() =>
+                    router.push("/dashboard/organization/challenges/create")
+                  }
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#3B82F6] px-4 py-2 text-sm font-medium text-white hover:bg-[#2563EB]"
+                >
                   <Plus className="h-4 w-4" />
                   Create Challenge
                 </button>
               </div>
+            </div>
 
+            {/* ---------------- Filters and Search ---------------- */}
+            <div className="mt-4 flex flex-wrap gap-3 items-center">
+              <input
+                type="text"
+                placeholder="Search by title..."
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+                className="rounded-lg border px-3 py-2 text-sm w-60 dark:bg-[#0B1220] dark:border-[#1F2937]"
+              />
+
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="rounded-lg border px-3 py-2 text-sm dark:bg-[#0B1220] dark:border-[#1F2937]"
+              >
+                <option value="">All Types</option>
+                <option value="innovation">Innovation</option>
+                <option value="hackathon">Hackathon</option>
+                <option value="pitch">Pitch</option>
+              </select>
+
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="rounded-lg border px-3 py-2 text-sm dark:bg-[#0B1220] dark:border-[#1F2937]"
+              >
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="open">Open</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+
+            {loading ? (
+              <p className="text-sm text-[#475467]">Loading challenges…</p>
+            ) : filteredChallenges.length === 0 ? (
+              <p className="text-sm text-[#475467]">No challenges match the filters.</p>
+            ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {challenges.map((challenge) => (
+                {filteredChallenges.map((challenge) => (
                   <div
                     key={challenge.id}
                     className="rounded-2xl border border-[#E4E7EC] bg-white p-5 dark:border-[#1F2937] dark:bg-[#101828]"
                   >
+                    {/* Header */}
                     <div className="flex items-center justify-between">
                       <Trophy className="h-6 w-6 text-[#14B8A6]" />
                       <span
@@ -115,28 +177,38 @@ export default function ChallengesPage() {
                       </span>
                     </div>
 
-                    <h3 className="mt-4 text-lg font-semibold">
-                      {challenge.title}
-                    </h3>
+                    <h3 className="mt-4 text-lg font-semibold">{challenge.title}</h3>
 
+                    {/* Meta */}
                     <div className="mt-4 space-y-2 text-sm text-[#475467] dark:text-slate-400">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        {challenge.deadline}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
-                        {challenge.reward}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        {challenge.participants} participants
-                      </div>
+                      {challenge.deadline && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          {new Date(challenge.deadline).toLocaleDateString()}
+                        </div>
+                      )}
+                      {challenge.award && (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4" />
+                          {challenge.award}
+                        </div>
+                      )}
+                      {challenge.participant_number !== undefined && (
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          {challenge.participant_number} participants
+                        </div>
+                      )}
                     </div>
 
+                    {/* Actions */}
                     <div className="mt-5 flex gap-2">
                       <button
-                        onClick={() => openDetail(challenge)}
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/organization/challenges/${challenge.id}`
+                          )
+                        }
                         className="inline-flex items-center gap-1 rounded-md border px-3 py-1 text-xs hover:bg-[#EEF2F6] dark:hover:bg-white/10"
                       >
                         <Eye className="h-3 w-3" />
@@ -144,7 +216,11 @@ export default function ChallengesPage() {
                       </button>
 
                       <button
-                        onClick={() => openEdit(challenge)}
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/organization/challenges/${challenge.id}/edit`
+                          )
+                        }
                         className="inline-flex items-center gap-1 rounded-md border px-3 py-1 text-xs hover:bg-[#EEF2F6] dark:hover:bg-white/10"
                       >
                         <Pencil className="h-3 w-3" />
@@ -162,78 +238,8 @@ export default function ChallengesPage() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* ---------------- DETAIL / EDIT ---------------- */}
-          {mode !== "list" && (
-            <div className="mx-auto max-w-3xl space-y-6">
-              <button
-                onClick={() => setMode("list")}
-                className="inline-flex items-center gap-2 text-sm text-[#475467] hover:text-[#101828] dark:text-slate-400"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to challenges
-              </button>
-
-              <div className="rounded-2xl border border-[#E4E7EC] bg-white p-6 dark:border-[#1F2937] dark:bg-[#101828]">
-                {mode === "detail" ? (
-                  <>
-                    <h2 className="text-xl font-semibold">{selected.title}</h2>
-                    <p className="mt-2 text-sm text-[#475467] dark:text-slate-400">
-                      {selected.description}
-                    </p>
-
-                    <div className="mt-6 space-y-2 text-sm">
-                      <p><strong>Deadline:</strong> {selected.deadline}</p>
-                      <p><strong>Reward:</strong> {selected.reward}</p>
-                      <p><strong>Status:</strong> {selected.status}</p>
-                    </div>
-
-                    <button
-                      onClick={() => setMode("edit")}
-                      className="mt-6 rounded-xl bg-[#3B82F6] px-4 py-2 text-sm font-medium text-white"
-                    >
-                      Edit Challenge
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="text-xl font-semibold">Edit Challenge</h2>
-
-                    <div className="mt-4 space-y-4">
-                      <input
-                        value={selected.title}
-                        onChange={(e) =>
-                          setSelected({ ...selected, title: e.target.value })
-                        }
-                        className="w-full rounded-md border border-[#E4E7EC] bg-[#F5F7FA] px-3 py-2 text-sm dark:border-[#1F2937] dark:bg-[#0B1220]"
-                      />
-
-                      <textarea
-                        rows={4}
-                        value={selected.description}
-                        onChange={(e) =>
-                          setSelected({
-                            ...selected,
-                            description: e.target.value,
-                          })
-                        }
-                        className="w-full rounded-md border border-[#E4E7EC] bg-[#F5F7FA] px-3 py-2 text-sm dark:border-[#1F2937] dark:bg-[#0B1220]"
-                      />
-                    </div>
-
-                    <button
-                      onClick={saveEdit}
-                      className="mt-6 rounded-xl bg-[#14B8A6] px-4 py-2 text-sm font-medium text-white"
-                    >
-                      Save Changes
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </main>
       </div>
     </div>

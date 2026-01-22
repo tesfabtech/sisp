@@ -11,13 +11,17 @@ import {
   User,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import axios from "@/lib/axios";
 
 export default function Header() {
   const router = useRouter();
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<{ first_name: string } | null>(null);
+  const [logo, setLogo] = useState<string | null>(null);
 
+  /* ================= LOAD USER + THEME ================= */
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
@@ -27,8 +31,23 @@ export default function Header() {
       document.documentElement.classList.add("dark");
       setDark(true);
     }
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    axios
+      .get("/organization/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        if (res.data.organization?.logo) {
+          setLogo(res.data.organization.logo);
+        }
+      })
+      .catch(() => {});
   }, []);
 
+  /* ================= ACTIONS ================= */
   const toggleTheme = () => {
     const next = dark ? "light" : "dark";
     setDark(!dark);
@@ -53,7 +72,7 @@ export default function Header() {
         dark:bg-[#0B1220]/80 dark:border-[#1F2937]
       "
     >
-      {/* Title */}
+      {/* ================= LEFT ================= */}
       <div>
         <h2 className="text-xl font-semibold text-[#101828] dark:text-white">
           Welcome back{user ? `, ${user.first_name}` : ""}
@@ -63,7 +82,7 @@ export default function Header() {
         </p>
       </div>
 
-      {/* Actions */}
+      {/* ================= RIGHT ================= */}
       <div className="flex items-center gap-3 relative">
         {/* Search */}
         <div className="relative hidden md:block">
@@ -127,7 +146,7 @@ export default function Header() {
           </span>
         </button>
 
-        {/* User */}
+        {/* ================= USER ================= */}
         <div className="relative">
           <button
             onClick={() => setOpen(!open)}
@@ -138,16 +157,23 @@ export default function Header() {
               dark:hover:bg-white/10
             "
           >
-            <div
-              className="
-                h-9 w-9 rounded-full
-                bg-[#3B82F6]
-                text-white font-semibold
-                flex items-center justify-center
-              "
-            >
-              {user?.first_name?.[0] || <User size={16} />}
+            <div className="h-9 w-9 rounded-full overflow-hidden border border-[#E4E7EC] dark:border-[#1F2937]">
+              {logo ? (
+                <Image
+                  src={`http://localhost:8000/storage/${logo}`}
+                  alt="Organization Logo"
+                  width={36}
+                  height={36}
+                  className="rounded-full object-cover"
+                  unoptimized
+                />
+              ) : (
+                <div className="h-full w-full bg-[#3B82F6] text-white font-semibold flex items-center justify-center">
+                  {user?.first_name?.[0] || <User size={16} />}
+                </div>
+              )}
             </div>
+
             <span className="hidden md:block text-sm font-medium text-[#101828] dark:text-white">
               {user?.first_name}
             </span>

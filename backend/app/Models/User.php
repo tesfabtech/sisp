@@ -54,4 +54,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Mentor::class);
     }
+    /**
+     * Organization account (one-to-one)
+     */
+    public function organization()
+    {
+        return $this->hasOne(Organization::class);
+    }
 }

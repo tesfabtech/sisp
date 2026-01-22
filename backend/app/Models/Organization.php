@@ -10,11 +10,27 @@ class Organization extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'user_id',
         'type',
+        'description',
         'logo',
+        'cover_image',
         'website',
+        'phone',
+        'address',
+        'status',
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function challenges()
     {

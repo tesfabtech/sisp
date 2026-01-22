@@ -5,6 +5,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StartupController;
 use App\Http\Controllers\MentorController;
 use App\Http\Controllers\MentorshipRequestController;
+use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\OrganizationEventController;
+use App\Http\Controllers\OrganizationChallengeController;
+use App\Http\Controllers\OrganizationFundingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminProfileController;
@@ -72,6 +76,58 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admin/profile', [AdminProfileController::class, 'updateProfile']);
     Route::put('/admin/password', [AdminProfileController::class, 'updatePassword']);
 });
+
+
+// Organization
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Profile
+    Route::get('/organization/profile', [OrganizationController::class, 'profile']);
+    Route::patch('/organization/profile', [OrganizationController::class, 'updateProfile']);
+
+
+
+    // Events
+    Route::get('/organization/events', [OrganizationEventController::class, 'index']);
+    // 🔥 Trash Event
+    Route::get('/organization/events/trashed', [OrganizationEventController::class, 'trashed']);
+    Route::post('/organization/events/{id}/restore', [OrganizationEventController::class, 'restore']);
+    Route::delete('/organization/events/{id}/force', [OrganizationEventController::class, 'forceDelete']);
+    // Single Event
+    Route::get('/organization/events/{event}', [OrganizationEventController::class, 'show']);
+    Route::post('/organization/events', [OrganizationEventController::class, 'store']);
+    Route::put('/organization/events/{event}', [OrganizationEventController::class, 'update']);
+    Route::delete('/organization/events/{event}', [OrganizationEventController::class, 'destroy']);
+
+
+
+    // Challenges
+    Route::get('/organization/challenges', [OrganizationChallengeController::class, 'index']);
+    // Trash routes
+    Route::get('/organization/challenges/trashed', [OrganizationChallengeController::class, 'trashed']);
+    Route::post('/organization/challenges/{id}/restore', [OrganizationChallengeController::class, 'restore']);
+    Route::delete('/organization/challenges/{id}/force', [OrganizationChallengeController::class, 'forceDelete']);
+    // Single Challenge
+    Route::get('/organization/challenges/{challenge}', [OrganizationChallengeController::class, 'show']);
+    Route::post('/organization/challenges', [OrganizationChallengeController::class, 'store']);
+    Route::put('/organization/challenges/{challenge}', [OrganizationChallengeController::class, 'update']);
+    Route::delete('/organization/challenges/{challenge}', [OrganizationChallengeController::class, 'destroy']);
+
+
+
+    // Funding Opportunities
+    Route::get('/organization/funding', [OrganizationFundingController::class, 'index']);
+    // Trash routes
+    Route::get('/organization/funding/trashed', [OrganizationFundingController::class, 'trashed']);
+    Route::post('/organization/funding/{id}/restore', [OrganizationFundingController::class, 'restore']);
+    Route::delete('/organization/funding/{id}/force', [OrganizationFundingController::class, 'forceDelete']);
+    // Single Funding Opportunity
+    Route::post('/organization/funding', [OrganizationFundingController::class, 'store']);
+    Route::get('/organization/funding/{funding}', [OrganizationFundingController::class, 'show']);
+    Route::put('/organization/funding/{funding}', [OrganizationFundingController::class, 'update']);
+    Route::delete('/organization/funding/{funding}', [OrganizationFundingController::class, 'destroy']);
+});
+
 
 /*
 |--------------------------------------------------------------------------

@@ -4,19 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'organization_id',
         'title',
+        'short_description', // ✅ ADD THIS
         'description',
         'event_type',
         'venue',
         'location',
         'event_datetime',
+        'status',             // ✅ if you’re using it
     ];
 
     protected $casts = [
