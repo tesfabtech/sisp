@@ -63,9 +63,13 @@ export default function Header() {
             >
               Login
             </Link>
-            <Button className="bg-linear-to-r from-[#0066FF] to-[#0047AB] hover:opacity-90 text-white px-5 rounded-lg shadow-md">
+            <Link href="/register/role">
+            <Button 
+              className="bg-linear-to-r from-[#0066FF] to-[#0047AB] hover:opacity-90 text-white px-5 rounded-lg shadow-md">
               Register
             </Button>
+          </Link>
+            
           </div>
         </div>
       </div>
