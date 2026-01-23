@@ -20,6 +20,7 @@ class Challenge extends Model
         'award',
         'status',            // updated enum: pending, open, cancelled, closed
         'participant_number', // new
+        'is_featured',
     ];
 
     protected $casts = [

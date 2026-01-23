@@ -11,6 +11,7 @@ import {
   Calendar,
   BookOpen,
   Handshake,
+  Building2,
   Megaphone,
   Shield,
   ShieldCheck,
@@ -29,8 +30,9 @@ const items = [
   { label: 'Startups', href: '/dashboard/admin/startups', icon: Rocket },
   { label: 'Challenges', href: '/dashboard/admin/challenges', icon: Target },
   { label: 'Events', href: '/dashboard/admin/events', icon: Calendar },
-  { label: 'Knowledge Hub', href: '#', icon: BookOpen },
+  { label: 'Knowledge Hub', href: '/dashboard/admin/knowledge', icon: BookOpen },
   { label: 'Mentorship', href: '/dashboard/admin/mentorship', icon: Handshake },
+  { label: 'Organizations', href: '/dashboard/admin/organization', icon: Building2 },
   { label: 'Announcements', href: '#', icon: Megaphone },
   { label: 'Moderation', href: '#', icon: Shield },
 ]

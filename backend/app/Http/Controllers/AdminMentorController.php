@@ -8,18 +8,17 @@ use Illuminate\Http\Request;
 class AdminMentorController extends Controller
 {
     /**
-     * Approved mentors (MAIN TABLE)
+     *  mentors (MAIN TABLE)
      */
     public function index()
     {
         $mentors = Mentor::with('user')
-            ->where('status', 'approved')
-            ->orderByDesc('featured')
             ->latest()
             ->get();
 
         return response()->json($mentors);
     }
+
 
     /**
      * Pending mentor requests
@@ -50,6 +49,9 @@ class AdminMentorController extends Controller
             'status' => $mentor->status,
         ]);
     }
+
+
+
 
     /**
      * Reject mentor
@@ -141,6 +143,15 @@ class AdminMentorController extends Controller
         $mentor->forceDelete();
         return response()->json([
             'message' => 'Mentor permanently deleted',
+        ]);
+    }
+
+    public function show($id)
+    {
+        $mentor = Mentor::with('user')->findOrFail($id);
+
+        return response()->json([
+            'mentor' => $mentor,
         ]);
     }
 }

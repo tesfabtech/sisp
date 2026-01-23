@@ -14,7 +14,10 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\AdminStartupController;
 use App\Http\Controllers\AdminMentorController;
-
+use App\Http\Controllers\AdminOrganizationController;
+use App\Http\Controllers\AdminChallengeController;
+use App\Http\Controllers\AdminEventController;
+use App\Http\Controllers\AdminKnowledgeController;
 /*
 |--------------------------------------------------------------------------
 | Public (Unauthenticated) Routes
@@ -184,4 +187,49 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::patch('/mentors/{id}/restore', [AdminMentorController::class, 'restore']);
     Route::delete('/mentors/{id}/force', [AdminMentorController::class, 'forceDelete']);
     Route::get('/mentors/deleted', [AdminMentorController::class, 'deleted']);
+    Route::get('/mentors/{id}', [AdminMentorController::class, 'show']);
+
+
+    // Organizations
+    Route::get('/organizations', [AdminOrganizationController::class, 'index']);
+    Route::get('/organizations/deleted', [AdminOrganizationController::class, 'deleted']);
+    Route::get('/organizations/{id}', [AdminOrganizationController::class, 'show']);
+    Route::patch('/organizations/{id}/approve', [AdminOrganizationController::class, 'approve']);
+    Route::patch('/organizations/{id}/reject', [AdminOrganizationController::class, 'reject']);
+    Route::delete('/organizations/{id}', [AdminOrganizationController::class, 'destroy']);
+    Route::patch('/organizations/{id}/restore', [AdminOrganizationController::class, 'restore']);
+    Route::delete('/organizations/{id}/force', [AdminOrganizationController::class, 'forceDelete']);
+
+    // Challenges
+    Route::get('/challenges', [AdminChallengeController::class, 'index']);
+    Route::get('/challenges/trashed', [AdminChallengeController::class, 'trashed']);
+    Route::get('/challenges/{id}', [AdminChallengeController::class, 'show']);
+
+    Route::patch('/challenges/{id}/status', [AdminChallengeController::class, 'updateStatus']);
+    Route::patch('/challenges/{id}/feature', [AdminChallengeController::class, 'feature']);
+    Route::delete('/challenges/{id}', [AdminChallengeController::class, 'destroy']);
+    Route::patch('/challenges/{id}/restore', [AdminChallengeController::class, 'restore']);
+    Route::delete('/challenges/{id}/force', [AdminChallengeController::class, 'forceDelete']);
+
+    // Events
+    Route::get('/events', [AdminEventController::class, 'index']);
+    Route::get('/events/trashed', [AdminEventController::class, 'trashed']);
+    Route::get('/events/{event}', [AdminEventController::class, 'show']);
+
+    Route::patch('/events/{event}/status', [AdminEventController::class, 'updateStatus']);
+    Route::patch('/events/{id}/feature', [AdminEventController::class, 'feature']);
+    Route::delete('/events/{event}', [AdminEventController::class, 'destroy']);
+    Route::patch('/events/{id}/restore', [AdminEventController::class, 'restore']);
+    Route::delete('/events/{id}/force', [AdminEventController::class, 'forceDelete']);
+
+    // Knowledge Hub
+    Route::get('/knowledge', [AdminKnowledgeController::class, 'index']);
+    Route::get('/knowledge/trashed', [AdminKnowledgeController::class, 'trashed']);
+    Route::get('/knowledge/{id}', [AdminKnowledgeController::class, 'show']);
+    Route::post('/knowledge', [AdminKnowledgeController::class, 'store']);
+    Route::post('/knowledge/{id}', [AdminKnowledgeController::class, 'update']);
+    Route::delete('/knowledge/{id}', [AdminKnowledgeController::class, 'destroy']);
+    Route::patch('/knowledge/{id}/restore', [AdminKnowledgeController::class, 'restore']);
+    Route::delete('/knowledge/{id}/force', [AdminKnowledgeController::class, 'forceDelete']);
+    Route::patch('/knowledge/{id}/feature', [AdminKnowledgeController::class, 'feature']);
 });

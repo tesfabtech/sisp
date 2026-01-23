@@ -1,6 +1,7 @@
 export type Mentor = {
   id: number
   title?: string | null
+  bio?: string | null
   expertise?: string[] | null
   industries?: string[] | null
   is_available: boolean

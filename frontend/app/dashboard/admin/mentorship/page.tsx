@@ -3,77 +3,70 @@
 import { useEffect, useMemo, useState } from 'react'
 import Header from '@/components/admin/header'
 import Sidebar from '@/components/admin/sidebar'
-import MentorTable from '@/components/admin/mentorship/mentor-table'
+import MentorCard from '@/components/admin/mentorship/mentor-card'
 import { Mentor } from '@/components/admin/mentorship/types'
 import axios from '@/lib/axios'
 import { Search, Star, Trash2 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function MentorshipPage() {
   const [mentors, setMentors] = useState<Mentor[]>([])
   const [loading, setLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'approved' | 'requests'>('approved')
-  const [showTrash, setShowTrash] = useState(false)
 
-  // 🔹 Featured toggle
-  const [showFeatured, setShowFeatured] = useState(false)
-
-  // Filters
+  // filters
   const [search, setSearch] = useState('')
   const [availability, setAvailability] = useState('')
+  const [status, setStatus] = useState('')
+  const [showFeatured, setShowFeatured] = useState(false)
 
-  // Fetch mentors
+  /* ───────── Fetch ALL mentors ───────── */
   useEffect(() => {
-    const fetchMentors = async () => {
-      const token = localStorage.getItem('admin_token')
-      if (!token) return
+    const token = localStorage.getItem('admin_token')
+    if (!token) return
 
-      try {
-        setLoading(true)
-        const url =
-          showTrash
-            ? '/admin/mentors/deleted'
-            : viewMode === 'requests'
-            ? '/admin/mentors/requests'
-            : '/admin/mentors'
+    setLoading(true)
 
-        const res = await axios.get(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        setMentors(res.data)
-      } catch (error) {
-        console.error('Failed to fetch mentors', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+    axios
+      .get('/admin/mentors', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(res => setMentors(res.data))
+      .finally(() => setLoading(false))
+  }, [])
 
-    fetchMentors()
-  }, [viewMode, showTrash])
+  /* ───────── Parent state helpers ───────── */
+  const updateMentor = (id: number, changes: Partial<Mentor>) => {
+    setMentors(prev =>
+      prev.map(m => (m.id === id ? { ...m, ...changes } : m))
+    )
+  }
 
-  // 🔹 Filtered mentors
+  const removeMentor = (id: number) => {
+    setMentors(prev => prev.filter(m => m.id !== id))
+  }
+
+  /* ───────── Filters ───────── */
   const filteredMentors = useMemo(() => {
-    return mentors.filter(mentor => {
-      // ⭐ Featured filter (only in approved view)
-      if (showFeatured && !mentor.featured) return false
+    return mentors.filter(m => {
+      if (showFeatured && !m.featured) return false
+      if (status && m.status !== status) return false
 
-      const q = search.toLowerCase()
+      if (availability === 'available' && !m.is_available) return false
+      if (availability === 'unavailable' && m.is_available) return false
 
-      const matchesSearch =
-        !search ||
-        mentor.user.first_name.toLowerCase().includes(q) ||
-        mentor.user.last_name.toLowerCase().includes(q) ||
-        mentor.user.email.toLowerCase().includes(q) ||
-        mentor.expertise?.some(e => e.toLowerCase().includes(q)) ||
-        mentor.industries?.some(i => i.toLowerCase().includes(q))
-
-      if (!matchesSearch) return false
-
-      if (availability === 'available' && !mentor.is_available) return false
-      if (availability === 'unavailable' && mentor.is_available) return false
+      if (search) {
+        const q = search.toLowerCase()
+        if (
+          !m.user.first_name.toLowerCase().includes(q) &&
+          !m.user.last_name.toLowerCase().includes(q) &&
+          !m.user.email.toLowerCase().includes(q)
+        )
+          return false
+      }
 
       return true
     })
-  }, [mentors, search, availability, showFeatured])
+  }, [mentors, search, availability, status, showFeatured])
 
   return (
     <div className="flex min-h-screen bg-muted/40">
@@ -85,96 +78,52 @@ export default function MentorshipPage() {
         <main className="p-6 space-y-6">
           {/* Page Header */}
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Mentorship
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Manage mentors, expertise, and availability
+            <div className='space-y-2'>
+              <h1 className="text-2xl font-semibold">Mentorship</h1>
+              <p className="text-sm text-gray-500">
+                Total mentors: {filteredMentors.length}
               </p>
             </div>
 
-            {/* View Mode + Featured + Trash */}
             <div className="flex items-center gap-2">
+              {/* Featured */}
               <button
-                className={`px-3 py-2 rounded-lg ${
-                  viewMode === 'approved'
-                    ? 'bg-sky-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-300'
+                onClick={() => setShowFeatured(p => !p)}
+                title="Featured"
+                className={`p-2 rounded-md transition ${
+                  showFeatured
+                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
-                onClick={() => {
-                  setViewMode('approved')
-                  setShowFeatured(false)
-                  setShowTrash(false)
-                }}
               >
-                Approved
+                <Star size={18} />
               </button>
 
-              <button
-                className={`px-3 py-2 rounded-lg ${
-                  viewMode === 'requests'
-                    ? 'bg-yellow-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-300'
-                }`}
-                onClick={() => {
-                  setViewMode('requests')
-                  setShowFeatured(false)
-                  setShowTrash(false)
-                }}
+              {/* Trash (navigation only) */}
+              <Link
+                href="/dashboard/admin/mentorship/trash"
+                title="Trash"
+                className="p-2 rounded-md transition hover:bg-gray-100 dark:hover:bg-gray-800"
               >
-                Requests
-              </button>
-
-              {/* ⭐ Featured Button */}
-              {viewMode === 'approved' && !showTrash && (
-                <button
-                  title="Featured mentors"
-                  onClick={() => setShowFeatured(prev => !prev)}
-                  className={`p-2 rounded-lg transition ${
-                    showFeatured
-                      ? 'bg-yellow-400/20 text-yellow-500'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
-                  }`}
-                >
-                  <Star
-                    size={18}
-                    className={showFeatured ? 'fill-yellow-400' : ''}
-                  />
-                </button>
-              )}
-
-              {/* 🗑 Trash Button */}
-              {viewMode === 'approved' && (
-                <button
-                  title="Deleted mentors"
-                  onClick={() => setShowTrash(prev => !prev)}
-                  className={`p-2 rounded-lg transition ${
-                    showTrash
-                      ? 'bg-red-400/20 text-red-600'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
-                  }`}
-                >
-                  <Trash2 size={18} />
-                </button>
-              )}
+                <Trash2 size={18} />
+              </Link>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             {/* Search */}
-            <div className="relative">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
+            <div className="relative w-64">
               <input
                 type="text"
-                placeholder="Search name, email, expertise..."
+                placeholder="Search mentors..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                className="w-full h-8 pl-3 pr-7 text-xs rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              />
+              <Search
+                size={14}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
               />
             </div>
 
@@ -182,25 +131,45 @@ export default function MentorshipPage() {
             <select
               value={availability}
               onChange={e => setAvailability(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+              className="h-8 px-2 text-xs rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
             >
               <option value="">All availability</option>
               <option value="available">Available</option>
               <option value="unavailable">Unavailable</option>
             </select>
+
+            {/* Status */}
+            <select
+              value={status}
+              onChange={e => setStatus(e.target.value)}
+              className="h-8 px-2 text-xs rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+            >
+              <option value="">All status</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
           </div>
 
-          {/* Table */}
-          {loading ? (
-            <div className="text-gray-500 dark:text-gray-400">
-              Loading mentors...
+          {loading && (
+            <p className="text-sm text-gray-400">Loading mentors...</p>
+          )}
+
+          {!loading && !filteredMentors.length && (
+            <p className="text-sm text-gray-400">No mentors found.</p>
+          )}
+
+          {!loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredMentors.map(mentor => (
+                <MentorCard
+                  key={mentor.id}
+                  mentor={mentor}
+                  onUpdate={updateMentor}
+                  onRemove={removeMentor}
+                />
+              ))}
             </div>
-          ) : (
-            <MentorTable
-              mentors={filteredMentors}
-              viewMode={viewMode}
-              showTrash={showTrash}
-            />
           )}
         </main>
       </div>

@@ -13,13 +13,14 @@ class Event extends Model
     protected $fillable = [
         'organization_id',
         'title',
-        'short_description', // ✅ ADD THIS
+        'short_description',
         'description',
         'event_type',
         'venue',
         'location',
         'event_datetime',
-        'status',             // ✅ if you’re using it
+        'status',
+        'is_featured',
     ];
 
     protected $casts = [
