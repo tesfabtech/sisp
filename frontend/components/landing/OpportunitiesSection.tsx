@@ -1,48 +1,63 @@
 'use client';
 
 import * as React from 'react';
+import axios from '@/lib/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useRouter } from 'next/navigation';
+
 
 import {
-  Trophy,
+ Trophy,
   Calendar,
   Wallet,
   ArrowRight,
   MapPin,
   Users,
+  CalendarClock,
+  Award,
+  DollarSign,
 } from 'lucide-react';
 
-/* -------------------------------------------------------------------------- */
-/*                                  TYPES                                     */
-/* -------------------------------------------------------------------------- */
+type Organization = {
+  id: number;
+  user: {
+    first_name: string;
+    last_name: string;
+  };
+  logo: string | null;
+};
 
 type Challenge = {
   id: number;
   title: string;
-  date: string;
-  summary: string;
-  prize: string;
+  short_description: string;
+  deadline: string;
+  award: string;
+  participant_number: number;
+  organization: Organization;
 };
 
 type Event = {
   id: number;
   title: string;
-  date: string;
-  summary: string;
+  short_description: string;
+  event_datetime: string;
   location: string;
+  organization: Organization;
 };
 
 type Funding = {
   id: number;
   title: string;
-  date: string;
-  summary: string;
+  short_description: string;
+  deadline: string;
   amount: string;
-  type: string;
+  funding_type: string;
+  organization: Organization;
 };
 
 type OpportunityMap = {
@@ -51,113 +66,49 @@ type OpportunityMap = {
   funding: Funding[];
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                  DATA                                      */
-/* -------------------------------------------------------------------------- */
-
-const opportunities: OpportunityMap = {
-  challenges: [
-    {
-      id: 1,
-      title: 'Agricultural Innovation Challenge 2024',
-      date: 'Dec 31, 2024',
-      summary:
-        'Design innovative solutions to increase agricultural productivity and sustainability in Sidama region. Win funding and mentorship to bring your ideas to life.',
-      prize: '$50,000',
-    },
-    {
-      id: 2,
-      title: 'EdTech Hackathon',
-      date: 'Nov 15, 2024',
-      summary:
-        '48-hour hackathon to build educational technology solutions for remote learning. Teams compete for prizes and investment opportunities.',
-      prize: '$25,000',
-    },
-    {
-      id: 3,
-      title: 'Climate Action Pitch Competition',
-      date: 'Oct 30, 2024',
-      summary:
-        'Pitch your climate-focused startup to investors and win seed funding. Focus on renewable energy, waste management and conservation.',
-      prize: '$75,000',
-    },
-  ],
-  events: [
-    {
-      id: 1,
-      title: 'SISP Annual Innovation Summit',
-      date: 'Jan 10–12, 2025',
-      summary:
-        'Networking, workshops, and talks from industry leaders.',
-      location: 'Hawassa Convention Center',
-    },
-    {
-      id: 2,
-      title: 'Startup Pitch Night',
-      date: 'Dec 28, 2024',
-      summary:
-        'Top startups pitch to investors and ecosystem partners.',
-      location: 'SISP Innovation Hub',
-    },
-  ],
-  funding: [
-    {
-      id: 1,
-      title: 'Sidama Seed Fund – Cohort 5',
-      date: 'Applications close Jan 31',
-      summary:
-        'Early-stage capital for scalable startups.',
-      amount: 'Up to $50,000',
-      type: 'Equity',
-    },
-    {
-      id: 2,
-      title: 'Green Innovation Grant',
-      date: 'Rolling applications',
-      summary:
-        'Non-dilutive funding for climate-focused startups.',
-      amount: 'Up to $30,000',
-      type: 'Grant',
-    },
-  ],
-};
-
-const tabIcons = {
-  challenges: Trophy,
-  events: Calendar,
-  funding: Wallet,
-} as const;
-
-/* -------------------------------------------------------------------------- */
-/*                              COMPONENT                                     */
-/* -------------------------------------------------------------------------- */
-
 export default function OpportunitiesSection() {
   const [activeTab, setActiveTab] =
     React.useState<keyof OpportunityMap>('challenges');
 
+  const [data, setData] = React.useState<OpportunityMap>({
+    challenges: [],
+    events: [],
+    funding: [],
+  });
+
+  React.useEffect(() => {
+    axios.get('/opportunities/featured').then(res => setData(res.data));
+  }, []);
+
+
+const router = useRouter();
+
+
+
+
   return (
-    <section className="relative py-32 overflow-hidden bg-gray-100 dark:bg-[#0B1220]">
-      {/* Dark glow */}
+    <section className="relative py-32 bg-gray-50 dark:bg-[#0B1220] overflow-hidden">
+      {/* subtle background glow */}
       <div className="absolute inset-0 dark:bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_60%)]" />
 
       <div className="relative max-w-7xl mx-auto px-6">
 
         {/* HEADER */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <Badge className="mb-5 px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
             ✨ Opportunities
           </Badge>
 
           <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-            Explore{' '}
+            Unlock{' '}
             <span className="text-blue-600 dark:text-blue-400">
               Growth Opportunities
             </span>
           </h2>
 
-          <p className="mt-5 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Access challenges, events, and funding opportunities designed to accelerate innovation
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400">
+            Discover challenges, events, and funding opportunities designed to
+            accelerate innovation across the ecosystem.
           </p>
         </div>
 
@@ -165,26 +116,38 @@ export default function OpportunitiesSection() {
         <div className="flex justify-center mb-16">
           <Tabs
             value={activeTab}
-            onValueChange={(val) =>
-              setActiveTab(val as keyof OpportunityMap)
-            }
+            onValueChange={v => setActiveTab(v as any)}
           >
-            <TabsList className="rounded-full p-1.5 bg-gray-100 dark:bg-white/5 border border-black/5 dark:border-white/10">
-              {(Object.keys(opportunities) as Array<
-                keyof OpportunityMap
-              >).map((tab) => {
-                const Icon = tabIcons[tab];
-                return (
-                  <TabsTrigger
-                    key={tab}
-                    value={tab}
-                    className="capitalize flex items-center gap-2 px-6 py-2.5 rounded-full data-[state=active]:bg-white dark:data-[state=active]:bg-[#0F172A]"
-                  >
-                    <Icon className="w-4 h-4" />
-                    {tab}
-                  </TabsTrigger>
-                );
-              })}
+            <TabsList className="flex gap-2 p-6 rounded-full bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 shadow-lg">
+              <TabsTrigger
+                value="challenges"
+                className="flex items-center gap-2 px-6 py-4 rounded-full text-sm font-medium transition-all
+                data-[state=active]:bg-blue-600 data-[state=active]:text-white
+                data-[state=active]:shadow-md"
+              >
+                <Trophy className="w-4 h-4" />
+                Challenges
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="events"
+                className="flex items-center gap-2 px-6 py-4 rounded-full text-sm font-medium transition-all
+                data-[state=active]:bg-blue-600 data-[state=active]:text-white
+                data-[state=active]:shadow-md"
+              >
+                <Calendar className="w-4 h-4" />
+                Events
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="funding"
+                className="flex items-center gap-2 px-6 py-4 rounded-full text-sm font-medium transition-all
+                data-[state=active]:bg-blue-600 data-[state=active]:text-white
+                data-[state=active]:shadow-md"
+              >
+                <Wallet className="w-4 h-4" />
+                Funding
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -193,80 +156,125 @@ export default function OpportunitiesSection() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3 }}
           >
-            {opportunities[activeTab].map((item) => {
-              const isChallenge = 'prize' in item;
-              const isEvent = 'location' in item;
-              const isFunding = 'amount' in item;
+            {data[activeTab]?.map((item: any) => (
+              <Card
+  key={item.id}
+  className="relative p-8 rounded-2xl bg-white overflow-hidden dark:bg-[#0F172A]
+  border border-black/5 dark:border-white/10
+  shadow-lg hover:shadow-2xl transition-all"
+>
+  {/* Top gradient line */}
+  <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-700 to-blue-400" />
 
-              return (
-                <Card
-                  key={item.id}
-                  className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#0F172A] border border-black/5 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all"
-                >
-                  {/* Top gradient line */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-700 to-blue-400" />
+  {/* TOP */}
+  <div className="flex justify-between mb-1">
+    {/* Org */}
+    <div className="flex items-center gap-3">
+      {item.organization?.logo && (
+        <img
+          src={`http://localhost:8000/storage/${item.organization.logo}`}
+          className="w-10 h-10 rounded-full object-cover border border-black/5"
+        />
+      )}
+      <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+        {item.organization.user.first_name}{' '}
+        {item.organization.user.last_name}
+      </div>
+    </div>
 
-                  <div className="p-8">              
+    {/* TYPE ICON */}
+    <div className="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center">
+      {activeTab === 'challenges' && <Trophy className="w-5 h-5 text-blue-600" />}
+      {activeTab === 'events' && <Calendar className="w-5 h-5 text-blue-600" />}
+      {activeTab === 'funding' && <Wallet className="w-5 h-5 text-blue-600" />}
+    </div>
+  </div>
 
-                    {/* Icon */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center">
-                        {isChallenge && <Trophy className="w-6 h-6 text-blue-700" />}
-                        {isEvent && <Calendar className="w-6 h-6 text-blue-700" />}
-                        {isFunding && <Wallet className="w-6 h-6 text-blue-700" />}
-                      </div>
+  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+    {item.title}
+  </h3>
 
-                      <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
-                        {isChallenge && 'Challenge'}
-                        {isEvent && 'Event'}
-                        {isFunding && 'Funding'}
-                      </Badge>
-                    </div>
+  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 leading-relaxed">
+    {item.short_description}
+  </p>
 
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                      {item.title}
-                    </h3>
+  {/* META */}
+  <div className="text-sm space-y-3 text-gray-500 dark:text-gray-400">
 
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                      {item.summary}
-                    </p>
+    {'deadline' in item && (
+  <div className="flex items-center gap-2">
+    <CalendarClock className="w-4 h-4 text-blue-500" />
+    {new Date(item.deadline).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })}
+  </div>
+)}
 
-                    {/* Meta */}
-                    <div className="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
-                      <div>📅 {item.date}</div>
+{'event_datetime' in item && (
+  <div className="flex items-center gap-2">
+    <CalendarClock className="w-4 h-4 text-blue-500" />
+    {new Date(item.event_datetime).toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })}
+  </div>
+)}
 
-                      {isChallenge && <div>🏆 Prize: {item.prize}</div>}
-                      {isEvent && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4" /> {item.location}
-                        </div>
-                      )}
-                      {isFunding && (
-                        <div>
-                          💰 {item.amount} • {item.type}
-                        </div>
-                      )}
-                    </div>
 
-                    <div className="flex justify-center text-blue-600 dark:text-blue-400 font-medium text-sm group cursor-pointer">
-                      View Details
-                      <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
-                    </div>
+    {'location' in item && (
+      <div className="flex items-center gap-2">
+        <MapPin className="w-4 h-4 text-blue-500" />
+        {item.location}
+      </div>
+    )}
 
-                  </div>
-                </Card>
-              );
-            })}
+    {'award' in item && (
+      <div className="flex items-center gap-2">
+        <Award className="w-4 h-4 text-blue-500" />
+        {item.award}
+      </div>
+    )}
+
+    {'participant_number' in item && (
+      <div className="flex items-center gap-2">
+        <Users className="w-4 h-4 text-blue-500" />
+        {item.participant_number} Participants
+      </div>
+    )}
+
+    {'amount' in item && (
+      <div className="flex items-center gap-2">
+        <DollarSign className="w-4 h-4 text-blue-500" />
+        {item.amount} ({item.funding_type})
+      </div>
+    )}
+  </div>
+
+  <div
+  className="mt-8 flex justify-center text-blue-600 dark:text-blue-400 font-medium text-sm group cursor-pointer"
+  onClick={() => router.push(`/opportunities/${activeTab}/${item.id}`)}
+>
+  View Details
+  <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+</div>
+
+</Card>
+
+            ))}
           </motion.div>
         </AnimatePresence>
       </div>
-      
     </section>
   );
 }

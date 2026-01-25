@@ -19,6 +19,7 @@ use App\Http\Controllers\AdminChallengeController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\AdminKnowledgeController;
 use App\Http\Controllers\AdminFundingController;
+use App\Http\Controllers\OpportunityController;
 /*
 |--------------------------------------------------------------------------
 | Public (Unauthenticated) Routes
@@ -34,6 +35,8 @@ Route::get('/startups/all', [StartupController::class, 'listApproved']);
 Route::get('/startups/detail/{id}', [StartupController::class, 'detail']);
 
 
+Route::get('/opportunities/featured', [OpportunityController::class, 'featured']);
+Route::get('/opportunities/{type}/{id}', [OpportunityController::class, 'show']);
 
 /*
 |--------------------------------------------------------------------------
