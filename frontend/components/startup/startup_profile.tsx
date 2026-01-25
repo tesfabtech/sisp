@@ -270,8 +270,14 @@ export default function StartupProfile() {
                 <SelectValue placeholder="Industry" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="tech">Technology</SelectItem>
-                <SelectItem value="health">Healthcare</SelectItem>
+                <SelectItem value="Tech">Technology</SelectItem>
+                <SelectItem value="HealthTech">Health Tech</SelectItem>
+                <SelectItem value="FinTech">Finance Tech</SelectItem>
+                <SelectItem value="AgriTech">Agriculture Tech</SelectItem>
+                <SelectItem value="EdTech">Education Tech</SelectItem>
+                <SelectItem value="Commerce">Commerce</SelectItem>
+                <SelectItem value="Social">Social</SelectItem>
+                <SelectItem value="Other">Other / General</SelectItem>
               </SelectContent>
             </Select>
 
@@ -283,6 +289,7 @@ export default function StartupProfile() {
                 <SelectItem value="idea">Idea</SelectItem>
                 <SelectItem value="mvp">MVP</SelectItem>
                 <SelectItem value="launched">Launched</SelectItem>
+                <SelectItem value="scaling">Scaling</SelectItem>
               </SelectContent>
             </Select>
 

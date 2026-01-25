@@ -78,13 +78,21 @@ class MentorController extends Controller
         );
 
         if ($request->hasFile('profile_image')) {
+            // delete old mentor image
             if ($mentor->profile_image) {
                 Storage::disk('public')->delete($mentor->profile_image);
             }
 
-            $validated['profile_image'] = $request
-                ->file('profile_image')
-                ->store('mentors', 'public');
+            // store new image
+            $path = $request->file('profile_image')->store('mentors', 'public');
+
+            // save on mentor
+            $validated['profile_image'] = $path;
+
+            // ✅ THIS IS THE IMPORTANT PART
+            $mentor->user->update([
+                'profile_photo' => $path,
+            ]);
         }
 
         $mentor->update($validated);

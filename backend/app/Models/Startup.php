@@ -34,4 +34,10 @@ class Startup extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // ✅ Add this relationship to fix 500 error
+    public function mentorshipRequests()
+    {
+        return $this->hasMany(MentorshipRequest::class);
+    }
 }

@@ -107,4 +107,82 @@ class StartupController extends Controller
             'startup' => $startup
         ]);
     }
+
+    public function index(Request $request)
+    {
+        $query = Startup::with('user')
+            ->where('status', 'approved')
+            ->whereNull('deleted_at');
+
+        if ($request->boolean('featured')) {
+            $query->where('featured', true);
+        }
+
+        return response()->json(
+            $query->latest()->get()
+        );
+    }
+
+    public function detail($id)
+    {
+        $startup = Startup::with('user')->find($id);
+
+        if (!$startup || $startup->status !== 'approved') {
+            abort(404, 'Startup not found');
+        }
+
+        return response()->json($startup);
+    }
+
+    public function listApproved()
+    {
+        return response()->json(
+            Startup::with('user')
+                ->where('status', 'approved')
+                ->latest()
+                ->get()
+        );
+    }
+
+    // ✅ Get startups for dropdowns / selectors (lightweight)
+    public function myStartupsSimple(Request $request)
+    {
+        return response()->json(
+            $request->user()
+                ->startups()
+                ->select('id', 'name')
+                ->latest()
+                ->get()
+        );
+    }
+
+
+    public function myStartupsWithApprovedMentors(Request $request)
+    {
+        $user = $request->user();
+
+        $startups = Startup::where('user_id', $user->id)
+            ->whereHas('mentorshipRequests', function ($q) {
+                $q->where('status', 'accepted'); // only approved/accepted
+            })
+            ->with(['mentorshipRequests' => function ($q) {
+                $q->where('status', 'accepted')->with('mentor.user');
+            }])
+            ->get()
+            ->map(function ($startup) {
+                // get the first approved mentor for the startup
+                $mentor = $startup->mentorshipRequests->first()?->mentor;
+                return [
+                    'id' => $startup->id,
+                    'name' => $startup->name,
+                    'mentor' => $mentor ? [
+                        'id' => $mentor->id,
+                        'name' => $mentor->user ? $mentor->user->first_name . ' ' . $mentor->user->last_name : '',
+                        'profile_image' => $mentor->profile_image,
+                    ] : null,
+                ];
+            });
+
+        return response()->json($startups);
+    }
 }

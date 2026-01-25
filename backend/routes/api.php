@@ -27,6 +27,13 @@ use App\Http\Controllers\AdminKnowledgeController;
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);
 
+Route::get('/startups', [StartupController::class, 'index']);
+Route::get('/startups/all', [StartupController::class, 'listApproved']);
+// Public startup detail (no auth)
+Route::get('/startups/detail/{id}', [StartupController::class, 'detail']);
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Admin Authentication (PUBLIC)
@@ -58,7 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/startups', [StartupController::class, 'store']);
     Route::put('/startups/{startup}', [StartupController::class, 'update']);
     Route::get('/startups/{startup}', [StartupController::class, 'show']);
-
+    Route::get('/my-startups-with-approved-mentors', [StartupController::class, 'myStartupsWithApprovedMentors']);
     // Mentor
     Route::get('/mentor/profile', [MentorController::class, 'show']);
     Route::post('/mentor/profile', [MentorController::class, 'storeOrUpdate']);
@@ -68,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
     | Mentorship Requests
     |--------------------------------------------------------------------------
     */
+    Route::get('/my-startups', [StartupController::class, 'myStartupsSimple']);
     Route::post('/mentorship-requests', [MentorshipRequestController::class, 'store']);
     Route::get('/mentorship-requests/my', [MentorshipRequestController::class, 'myRequests']);
 
