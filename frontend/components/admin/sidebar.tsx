@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Settings,
   FileText,
+  Wallet,
 } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -30,6 +31,7 @@ const items = [
   { label: 'Startups', href: '/dashboard/admin/startups', icon: Rocket },
   { label: 'Challenges', href: '/dashboard/admin/challenges', icon: Target },
   { label: 'Events', href: '/dashboard/admin/events', icon: Calendar },
+  { label: 'Funds', href: '/dashboard/admin/funding', icon: Wallet },
   { label: 'Knowledge Hub', href: '/dashboard/admin/knowledge', icon: BookOpen },
   { label: 'Mentorship', href: '/dashboard/admin/mentorship', icon: Handshake },
   { label: 'Organizations', href: '/dashboard/admin/organization', icon: Building2 },

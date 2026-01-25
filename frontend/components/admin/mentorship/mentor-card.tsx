@@ -161,8 +161,7 @@ export default function MentorCard({ mentor, onUpdate, onRemove }: Props) {
   {mentor.user.first_name} {mentor.user.last_name}
   {/* Availability dot */}
   <span
-    className={`h-3 w-3 rounded-full shrink-0 ${
-      mentor.is_available ? 'bg-green-500' : 'bg-yellow-500'
+    className={`h-3 w-3 rounded-full shrink-0 ${   mentor.is_available ? 'bg-green-500' : 'bg-yellow-500'
     }`}
   />
 </p>

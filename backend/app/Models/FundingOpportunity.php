@@ -20,6 +20,7 @@ class FundingOpportunity extends Model
         'application_number',
         'funding_type',
         'status',
+        'is_featured',
     ];
 
     protected $casts = [

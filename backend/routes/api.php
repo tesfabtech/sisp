@@ -18,6 +18,7 @@ use App\Http\Controllers\AdminOrganizationController;
 use App\Http\Controllers\AdminChallengeController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\AdminKnowledgeController;
+use App\Http\Controllers\AdminFundingController;
 /*
 |--------------------------------------------------------------------------
 | Public (Unauthenticated) Routes
@@ -240,4 +241,16 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::patch('/knowledge/{id}/restore', [AdminKnowledgeController::class, 'restore']);
     Route::delete('/knowledge/{id}/force', [AdminKnowledgeController::class, 'forceDelete']);
     Route::patch('/knowledge/{id}/feature', [AdminKnowledgeController::class, 'feature']);
+
+
+    // Admin Funding
+    Route::get('/funding', [AdminFundingController::class, 'index']);
+    Route::get('/funding/trashed', [AdminFundingController::class, 'trashed']);
+    Route::get('/funding/{id}', [AdminFundingController::class, 'show']);
+    Route::post('/funding', [AdminFundingController::class, 'store']);
+    Route::patch('/funding/{id}', [AdminFundingController::class, 'update']);
+    Route::delete('/funding/{id}', [AdminFundingController::class, 'destroy']);
+    Route::patch('/funding/{id}/restore', [AdminFundingController::class, 'restore']);
+    Route::delete('/funding/{id}/force', [AdminFundingController::class, 'forceDelete']);
+    Route::patch('/funding/{id}/feature', [AdminFundingController::class, 'feature']);
 });
