@@ -20,6 +20,7 @@ use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\AdminKnowledgeController;
 use App\Http\Controllers\AdminFundingController;
 use App\Http\Controllers\OpportunityController;
+use App\Http\Controllers\KnowledgeHubController;
 /*
 |--------------------------------------------------------------------------
 | Public (Unauthenticated) Routes
@@ -35,9 +36,13 @@ Route::get('/startups/all', [StartupController::class, 'listApproved']);
 Route::get('/startups/detail/{id}', [StartupController::class, 'detail']);
 
 
+Route::get('/opportunities', [OpportunityController::class, 'index']);
 Route::get('/opportunities/featured', [OpportunityController::class, 'featured']);
 Route::get('/opportunities/{type}/{id}', [OpportunityController::class, 'show']);
 
+
+
+Route::get('/knowledge-hub/featured', [KnowledgeHubController::class, 'featured']);
 /*
 |--------------------------------------------------------------------------
 | Admin Authentication (PUBLIC)

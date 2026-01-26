@@ -3,7 +3,7 @@
 import * as React from 'react';
 import axios from '@/lib/axios';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -274,6 +274,18 @@ const router = useRouter();
             ))}
           </motion.div>
         </AnimatePresence>
+
+
+        {/* VIEW ALL */}
+        <div className="mt-14 text-center">
+          <Link
+            href="/opportunities"
+            className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:gap-3 transition-all cursor-pointer"
+          >
+            View All Opportunities
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+        </div>
       </div>
     </section>
   );

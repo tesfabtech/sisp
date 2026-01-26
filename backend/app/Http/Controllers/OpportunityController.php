@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Challenge;
 use App\Models\Event;
 use App\Models\FundingOpportunity;
+use Illuminate\Http\Request;
 
 class OpportunityController extends Controller
 {
@@ -28,6 +29,40 @@ class OpportunityController extends Controller
                 ->get(),
         ]);
     }
+
+
+    /**
+     * 🔥 NEW: Published opportunities by type
+     */
+    public function index(Request $request)
+    {
+        $type = $request->query('type');
+
+        switch ($type) {
+            case 'challenges':
+                return Challenge::with('organization.user')
+                    ->where('status', 'published')
+                    ->latest()
+                    ->get();
+
+            case 'events':
+                return Event::with('organization.user')
+                    ->where('status', 'published')
+                    ->latest()
+                    ->get();
+
+            case 'funding':
+                return FundingOpportunity::with('organization.user')
+                    ->where('status', 'published')
+                    ->latest()
+                    ->get();
+
+            default:
+                return response()->json([], 200);
+        }
+    }
+
+
 
     public function show($type, $id)
     {
