@@ -21,6 +21,7 @@ use App\Http\Controllers\AdminKnowledgeController;
 use App\Http\Controllers\AdminFundingController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\KnowledgeHubController;
+use App\Http\Controllers\MessageController;
 /*
 |--------------------------------------------------------------------------
 | Public (Unauthenticated) Routes
@@ -87,6 +88,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-startups', [StartupController::class, 'myStartupsSimple']);
     Route::post('/mentorship-requests', [MentorshipRequestController::class, 'store']);
     Route::get('/mentorship-requests/my', [MentorshipRequestController::class, 'myRequests']);
+    Route::get('/mentor/my-accepted-startups', [MentorController::class, 'myAcceptedStartups']);
+
+    // Messaging
+    Route::get('/messages', [MessageController::class, 'index']);
+    Route::post('/messages', [MessageController::class, 'store']);
+    Route::delete('/messages/{id}', [MessageController::class, 'destroy']);
+    Route::delete('/messages', [MessageController::class, 'destroyAll']);
+
 
     // Mentor side
     Route::get('/mentorship-requests/mentor', [MentorshipRequestController::class, 'mentorRequests']);

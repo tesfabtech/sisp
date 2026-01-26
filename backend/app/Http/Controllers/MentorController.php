@@ -6,6 +6,8 @@ use App\Models\Mentor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Startup;
+use App\Enums\MentorshipStatus;
 
 class MentorController extends Controller
 {
@@ -102,4 +104,34 @@ class MentorController extends Controller
             'mentor' => $mentor,
         ]);
     }
+
+    
+public function myAcceptedStartups(Request $request)
+{
+    $mentor = Mentor::where('user_id', $request->user()->id)->firstOrFail();
+
+    $startups = Startup::whereHas('mentorshipRequests', function ($q) use ($mentor) {
+            $q->where('mentor_id', $mentor->id)
+              ->where('status', MentorshipStatus::ACCEPTED);
+        })
+        ->with([
+            'user:id,first_name,last_name',
+            'mentorshipRequests' => function ($q) use ($mentor) {
+                $q->where('mentor_id', $mentor->id)
+                  ->where('status', MentorshipStatus::ACCEPTED);
+            }
+        ])
+        ->get()
+        ->map(function ($startup) {
+            return [
+                'id' => $startup->id,
+                'name' => $startup->name,
+                'owner' => [
+                    'name' => $startup->user->first_name . ' ' . $startup->user->last_name,
+                ],
+            ];
+        });
+
+    return response()->json($startups);
+}
 }

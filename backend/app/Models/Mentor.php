@@ -32,4 +32,9 @@ class Mentor extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function mentorshipRequests()
+{
+    return $this->hasMany(MentorshipRequest::class);
+}
 }

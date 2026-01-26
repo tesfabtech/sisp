@@ -33,12 +33,12 @@ export default function MentorSidebar() {
   }
 
   return (
-    <aside className="w-64 border-r bg-white dark:bg-gray-900 flex flex-col">
+    <aside className="w-64 sticky top-0 h-screen border-r bg-white dark:bg-gray-900 flex flex-col">
       <div className="px-6 py-4 text-lg font-bold text-gray-900 dark:text-white">
         MentorHub
       </div>
 
-      <nav className="flex-1 px-2 space-y-1">
+      <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
         {items.map((item) => {
           const active = pathname === item.href
 

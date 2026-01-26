@@ -40,4 +40,5 @@ class Startup extends Model
     {
         return $this->hasMany(MentorshipRequest::class);
     }
+    
 }
