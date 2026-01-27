@@ -22,6 +22,7 @@ use App\Http\Controllers\AdminFundingController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\KnowledgeHubController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\DashboardController;
 /*
 |--------------------------------------------------------------------------
 | Public (Unauthenticated) Routes
@@ -75,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/startups', [StartupController::class, 'store']);
     Route::put('/startups/{startup}', [StartupController::class, 'update']);
     Route::get('/startups/{startup}', [StartupController::class, 'show']);
+    Route::get('/dashboard/overview', [DashboardController::class, 'overview']);
     Route::get('/my-startups-with-approved-mentors', [StartupController::class, 'myStartupsWithApprovedMentors']);
     // Mentor
     Route::get('/mentor/profile', [MentorController::class, 'show']);
