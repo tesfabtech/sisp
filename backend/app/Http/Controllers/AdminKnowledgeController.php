@@ -128,7 +128,13 @@ class AdminKnowledgeController extends Controller
     public function feature($id)
     {
         $knowledge = KnowledgeHub::findOrFail($id);
-        $knowledge->update(['is_featured' => true]);
-        return response()->json(['message' => 'Featured']);
+
+        $knowledge->is_featured = ! $knowledge->is_featured;
+        $knowledge->save();
+
+        return response()->json([
+            'message' => 'Feature status updated',
+            'is_featured' => $knowledge->is_featured
+        ]);
     }
 }

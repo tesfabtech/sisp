@@ -134,4 +134,48 @@ public function myAcceptedStartups(Request $request)
 
     return response()->json($startups);
 }
+
+
+    /*
+|--------------------------------------------------------------------------
+| PUBLIC: Featured mentors (Landing / Mentorship Section)
+|--------------------------------------------------------------------------
+*/
+    public function featured()
+    {
+        $mentors = Mentor::with('user:id,first_name,last_name')
+            ->where('featured', true)
+            ->where('status', 'approved') // ✅ FIXED
+            ->whereNull('deleted_at')
+            ->select([
+                'id',
+                'user_id',
+                'title',
+                'expertise',
+                'profile_image',
+                'featured',
+                'status',
+            ])
+            ->limit(4)
+            ->get()
+            ->map(function ($mentor) {
+                return [
+                    'id' => $mentor->id,
+                    'title' => $mentor->title,
+                    'expertise' => is_array($mentor->expertise)
+                        ? $mentor->expertise
+                        : json_decode($mentor->expertise ?? '[]', true),
+                    'profile_image' => $mentor->profile_image
+                        ? asset('storage/' . $mentor->profile_image)
+                        : null,
+                    'user' => [
+                        'name' => trim(
+                            ($mentor->user->first_name ?? '') . ' ' . ($mentor->user->last_name ?? '')
+                        ),
+                    ],
+                ];
+            });
+
+        return response()->json($mentors);
+    }
 }

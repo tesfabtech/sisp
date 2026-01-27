@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, MessageCircle, Star, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import axios from '@/lib/axios-public';
+import Link from 'next/link';
 
 type Mentor = {
   id: number;
@@ -14,52 +17,39 @@ type Mentor = {
   image: string;
 };
 
-const mentors: Mentor[] = [
-  {
-    id: 1,
-    name: 'Dr. Bekele Amare',
-    role: 'Tech Entrepreneur',
-    expertise: 'Product Strategy',
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?w=200',
-  },
-  {
-    id: 2,
-    name: 'Tigist Haile',
-    role: 'Venture Partner',
-    expertise: 'Fundraising',
-    rating: 5.0,
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200',
-  },
-  {
-    id: 3,
-    name: 'Samuel Girma',
-    role: 'Growth Advisor',
-    expertise: 'Marketing & Sales',
-    rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1544725176-7c40e5a2c9f9?w=200',
-  },
-  {
-    id: 4,
-    name: 'Helen Tadesse',
-    role: 'Legal Expert',
-    expertise: 'Business Law',
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=200',
-  },
-];
-
 export default function MentorshipSection() {
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+
+  useEffect(() => {
+    axios.get('/mentors/featured')
+      .then((res) => {
+        const mappedMentors: Mentor[] = res.data.map((mentor: any) => ({
+          id: mentor.id,
+          name: mentor.user?.name ?? 'Unknown Mentor',
+          role: mentor.title,
+          expertise: mentor.expertise?.[0] ?? 'Mentorship',
+          rating: 4.0, // placeholder (no rating column yet)
+          image: mentor.profile_image,
+        }));
+
+        setMentors(mappedMentors);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch featured mentors', err);
+      });
+  }, []);
+
   return (
     <section className="relative py-28 overflow-hidden text-white">
       {/* MODERATE GRADIENT BACKGROUND */}
-      <div className="absolute inset-0 bg-linear-to-br 
+      <div
+        className="absolute inset-0 bg-linear-to-br 
         from-[#EAF1FF] via-[#F3F7FF] to-[#EAFBFA]
         dark:from-[#071A2F] dark:via-[#0B2447] dark:to-[#062A2F]
-      " />
+      "
+      />
 
       {/* GRID / NET BACKGROUND */}
-      {/* Light mode grid */}
       <div
         className="absolute inset-0 opacity-30 dark:hidden"
         style={{
@@ -71,7 +61,6 @@ export default function MentorshipSection() {
         }}
       />
 
-      {/* Dark mode grid */}
       <div
         className="absolute inset-0 opacity-25 hidden dark:block"
         style={{
@@ -133,14 +122,15 @@ export default function MentorshipSection() {
               </div>
             </div>
           </div>
-
+        <Link href="/register/role">
           <Button
             size="lg"
-            className="mt-10 bg-blue-600 text-white hover:bg-blue-700 dark:bg-white dark:text-blue-700 dark:hover:bg-white/90 font-semibold"
+            className="mt-10 bg-blue-600 text-white hover:bg-blue-700 dark:bg-white dark:text-blue-700 dark:hover:bg-white/90 font-semibold cursor-pointer"
           >
-            Explore Mentorship
+            Signup as Mentor
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
+          </Link>
         </motion.div>
 
         {/* RIGHT MENTOR CARDS */}

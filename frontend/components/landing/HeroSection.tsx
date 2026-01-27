@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Rocket, Lightbulb } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HeroSection() {
   return (
@@ -75,17 +76,21 @@ export default function HeroSection() {
 
             {/* Buttons */}
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white shadow-md">
-                Register Now
-              </Button>
+              <Link href="/register/role">
+                <Button className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white shadow-md cursor-pointer">
+                  Register Now
+                </Button>
+              </Link>
 
+             <Link href="/opportunities">
               <Button
                 variant="outline"
-                className="h-12 px-6 dark:border-gray-700"
+                className="h-12 px-6 dark:border-gray-700 cursor-pointer"
               >
                 Explore Opportunities
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
+              </Link>
             </div>
 
             {/* Stats */}

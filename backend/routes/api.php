@@ -33,6 +33,7 @@ Route::post('/auth/register', [AuthController::class, 'register']);
 
 Route::get('/startups', [StartupController::class, 'index']);
 Route::get('/startups/all', [StartupController::class, 'listApproved']);
+Route::get('/startups/featured', [StartupController::class, 'featured']);
 // Public startup detail (no auth)
 Route::get('/startups/detail/{id}', [StartupController::class, 'detail']);
 
@@ -42,8 +43,11 @@ Route::get('/opportunities/featured', [OpportunityController::class, 'featured']
 Route::get('/opportunities/{type}/{id}', [OpportunityController::class, 'show']);
 
 
-
+Route::get('/knowledge-hub', [KnowledgeHubController::class, 'index']);
 Route::get('/knowledge-hub/featured', [KnowledgeHubController::class, 'featured']);
+Route::get('/knowledge-hub/{slug}', [KnowledgeHubController::class, 'show']);
+
+Route::get('/mentors/featured', [MentorController::class, 'featured']); 
 /*
 |--------------------------------------------------------------------------
 | Admin Authentication (PUBLIC)

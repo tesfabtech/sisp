@@ -205,7 +205,7 @@ const submit = async () => {
           onInput={e =>
             setDescription((e.target as HTMLDivElement).innerHTML)
           }
-          className="min-h-[420px] rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-base leading-relaxed focus:outline-none focus:ring-1 focus:ring-sky-500 bg-white dark:bg-gray-900"
+          className="min-h-105 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-base leading-relaxed focus:outline-none focus:ring-1 focus:ring-sky-500 bg-white dark:bg-gray-900"
           dangerouslySetInnerHTML={{ __html: description }}
         />
       </div>

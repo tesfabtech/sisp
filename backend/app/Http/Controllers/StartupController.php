@@ -185,4 +185,16 @@ class StartupController extends Controller
 
         return response()->json($startups);
     }
+
+    public function featured()
+    {
+        return response()->json(
+            Startup::with('user')
+                ->where('status', 'approved')
+                ->where('featured', true)
+                ->latest()
+                ->limit(4)
+                ->get()
+        );
+    }
 }

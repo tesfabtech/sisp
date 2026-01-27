@@ -7,6 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, ArrowRight, Clock, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
 
 type Article = {
   id: number;
@@ -22,6 +25,7 @@ type Article = {
 export default function KnowledgeHub() {
   const [articles, setArticles] = React.useState<Article[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const router = useRouter();
 
   React.useEffect(() => {
     axios
@@ -59,13 +63,16 @@ export default function KnowledgeHub() {
             </p>
           </div>
 
-          <Button
-            variant="outline"
-            className="mt-6 md:mt-0 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all"
-          >
-            View All Articles
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          <Link href="/knowledge">
+  <Button
+    variant="outline"
+    className="mt-6 md:mt-0 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all cursor-pointer"
+  >
+    View All Articles
+    <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</Link>
+
         </motion.div>
 
         {/* CARDS */}
@@ -122,10 +129,14 @@ export default function KnowledgeHub() {
                       {article.excerpt}
                     </p>
 
-                    <div className="mt-6 flex items-center text-blue-600 font-medium text-sm">
-                      Read More
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </div>
+                    <div
+  className="mt-6 flex items-center text-blue-600 font-medium text-sm group cursor-pointer"
+  onClick={() => router.push(`/knowledge/${article.slug}`)}
+>
+  Read More
+  <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+</div>
+
                   </div>
                 </Card>
               </motion.div>

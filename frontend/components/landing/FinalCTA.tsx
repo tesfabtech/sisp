@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function FinalCTA() {
   return (
@@ -66,13 +67,15 @@ export default function FinalCTA() {
           transition={{ delay: 0.2 }}
           className="mt-10 flex justify-center"
         >
+          <Link href="/register/role">
           <Button
             size="lg"
-            className="h-12 px-8 bg-white text-blue-700 hover:bg-white/90 font-semibold shadow-xl rounded-xl"
+            className="h-12 px-8 bg-white text-blue-700 hover:bg-white/90 font-semibold shadow-xl rounded-xl cursor-pointer"
           >
             Create Your Account
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
+          </Link>
         </motion.div>
 
         {/* FOOTER NOTE */}

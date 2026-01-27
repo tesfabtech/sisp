@@ -16,16 +16,19 @@ class OpportunityController extends Controller
             'challenges' => Challenge::with(['organization.user'])
                 ->where('is_featured', true)
                 ->where('status', 'open')
+                ->limit(3)
                 ->get(),
 
             'events' => Event::with(['organization.user'])
                 ->where('is_featured', true)
                 ->where('status', 'published')
+                ->limit(3)
                 ->get(),
 
             'funding' => FundingOpportunity::with(['organization.user'])
                 ->where('is_featured', true)
                 ->where('status', 'open')
+                ->limit(3)
                 ->get(),
         ]);
     }
@@ -41,7 +44,7 @@ class OpportunityController extends Controller
         switch ($type) {
             case 'challenges':
                 return Challenge::with('organization.user')
-                    ->where('status', 'published')
+                    ->where('status', 'open')
                     ->latest()
                     ->get();
 
@@ -53,7 +56,7 @@ class OpportunityController extends Controller
 
             case 'funding':
                 return FundingOpportunity::with('organization.user')
-                    ->where('status', 'published')
+                    ->where('status', 'open')
                     ->latest()
                     ->get();
 

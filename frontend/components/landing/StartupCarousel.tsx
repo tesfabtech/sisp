@@ -43,7 +43,7 @@ export default function StartupCarousel() {
 
   useEffect(() => {
     axios
-      .get('/startups', { params: { featured: 1 } })
+      .get('/startups/featured', { params: { featured: 1 } })
       .then((res) => setStartups(res.data.data ?? res.data))
       .catch((err) =>
         console.error('Failed to fetch featured startups', err),

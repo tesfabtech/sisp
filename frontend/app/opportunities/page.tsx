@@ -75,38 +75,43 @@ export default function OpportunitiesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get('/opportunities/featured');
+  const fetchData = async () => {
+    try {
+      const [chRes, evRes, fuRes] = await Promise.all([
+        axios.get('/opportunities?type=challenges'),
+        axios.get('/opportunities?type=events'),
+        axios.get('/opportunities?type=funding'),
+      ])
 
-        const challenges = res.data.challenges.map((c: any) => ({
-          ...c,
-          type: 'challenges',
-        }));
+      const challenges = chRes.data.map((c: any) => ({
+        ...c,
+        type: 'challenges',
+      }))
 
-        const events = res.data.events.map((e: any) => ({
-          ...e,
-          type: 'events',
-        }));
+      const events = evRes.data.map((e: any) => ({
+        ...e,
+        type: 'events',
+      }))
 
-        const funding = res.data.funding.map((f: any) => ({
-          ...f,
-          type: 'funding',
-        }));
+      const funding = fuRes.data.map((f: any) => ({
+        ...f,
+        type: 'funding',
+      }))
 
-        setData({
-          challenges,
-          events,
-          funding,
-          all: [...challenges, ...events, ...funding],
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+      setData({
+        challenges,
+        events,
+        funding,
+        all: [...challenges, ...events, ...funding],
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
-    fetchData();
-  }, []);
+  fetchData()
+}, [])
+
 
   return (
     <>
