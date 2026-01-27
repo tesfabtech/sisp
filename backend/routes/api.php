@@ -23,6 +23,8 @@ use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\KnowledgeHubController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MentorOverviewController;
+
 /*
 |--------------------------------------------------------------------------
 | Public (Unauthenticated) Routes
@@ -85,6 +87,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Mentor
     Route::get('/mentor/profile', [MentorController::class, 'show']);
     Route::post('/mentor/profile', [MentorController::class, 'storeOrUpdate']);
+    Route::get('/mentor/overview', [MentorOverviewController::class, 'overview']);
+    Route::post('/mentor/toggle-availability', [MentorOverviewController::class, 'toggleAvailability']);
 
     /*
     |--------------------------------------------------------------------------
