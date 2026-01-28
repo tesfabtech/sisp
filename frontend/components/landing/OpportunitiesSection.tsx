@@ -87,7 +87,9 @@ const router = useRouter();
 
 
   return (
-    <section className="relative py-32 bg-gray-50 dark:bg-[#0B1220] overflow-hidden">
+    <section
+    id="opportunities"
+    className="relative py-32 bg-gray-50 dark:bg-[#0B1220] overflow-hidden">
       {/* subtle background glow */}
       <div className="absolute inset-0 dark:bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_60%)]" />
 
@@ -280,7 +282,7 @@ const router = useRouter();
         <div className="mt-14 text-center">
           <Link
             href="/opportunities"
-            className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:gap-3 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 text-orange-600 dark:text-orange-400 font-semibold hover:gap-3 transition-all cursor-pointer"
           >
             View All Opportunities
             <ArrowRight className="w-5 h-5" />

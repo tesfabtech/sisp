@@ -49,13 +49,13 @@ export default function KnowledgeHub() {
           className="flex flex-col md:flex-row md:items-end md:justify-between mb-16"
         >
           <div>
-            <Badge className="mb-6 px-4 py-1.5 font-semibold bg-linear-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-400 border border-purple-200/50 dark:border-purple-700/50">
+            <Badge className="mb-6 px-4 py-1.5 font-semibold  bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
               <BookOpen className="w-3.5 h-3.5 mr-1.5" />
               Knowledge Hub
             </Badge>
 
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-              Learn & Grow
+             <span className="text-blue-600 dark:text-blue-400"> Learn</span> & <span className="text-blue-600 dark:text-blue-400">Grow</span>
             </h2>
 
             <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-xl">
@@ -66,7 +66,7 @@ export default function KnowledgeHub() {
           <Link href="/knowledge">
   <Button
     variant="outline"
-    className="mt-6 md:mt-0 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all cursor-pointer"
+    className="mt-6 md:mt-0 hover:bg-orange-700 hover:text-white bg-orange-600 transition-all cursor-pointer"
   >
     View All Articles
     <ArrowRight className="w-4 h-4 ml-2" />

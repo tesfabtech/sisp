@@ -9,6 +9,7 @@ import {
   Moon,
   LogOut,
   User,
+  Home,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -84,24 +85,15 @@ export default function Header() {
 
       {/* ================= RIGHT ================= */}
       <div className="flex items-center gap-3 relative">
-        {/* Search */}
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#667085]" />
-          <input
-            placeholder="Search..."
-            className="
-              w-72 rounded-xl
-              border border-[#D0D5DD]
-              bg-white
-              px-9 py-2 text-sm
-              text-[#101828]
-              placeholder:text-[#667085]
-              focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/40
-              dark:bg-[#101828] dark:border-[#1F2937]
-              dark:text-white dark:placeholder:text-gray-400
-            "
-          />
-        </div>
+         {/* Home Button */}
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => router.push('/')}
+          className="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition currsor-pointer"
+          title="Home"
+        >
+          <Home size={18} />
+        </motion.button>
 
         {/* Theme toggle */}
         <motion.button
