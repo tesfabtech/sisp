@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Startup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\JsonResponse;
 
 class StartupController extends Controller
 {
@@ -196,5 +197,71 @@ class StartupController extends Controller
                 ->limit(4)
                 ->get()
         );
+    }
+
+    public function destroy(Request $request, Startup $startup)
+    {
+        // Ensure the user owns the startup
+        if ($startup->user_id !== $request->user()->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $startup->delete(); // Soft delete (requires SoftDeletes trait in model)
+
+        return response()->json([
+            'message' => 'Startup moved to trash'
+        ]);
+    }
+
+    // Get soft-deleted startups for the logged-in user
+    public function trash(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $startups = Startup::onlyTrashed()
+            ->where('user_id', $user->id)
+            ->latest('deleted_at')
+            ->get();
+
+        return response()->json([
+            'data' => $startups
+        ]);
+    }
+
+
+
+
+
+    // Restore a soft-deleted startup
+    public function restore(Request $request, $startup)
+    {
+        $startup = Startup::withTrashed()->findOrFail($startup);
+
+        if ($startup->user_id !== $request->user()->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $startup->restore();
+
+        return response()->json(['message' => 'Startup restored']);
+    }
+
+
+    // Permanently delete a soft-deleted startup
+    public function forceDelete(Request $request, $startup)
+    {
+        $startup = Startup::withTrashed()->findOrFail($startup);
+
+        if ($startup->user_id !== $request->user()->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $startup->forceDelete();
+
+        return response()->json(['message' => 'Startup permanently deleted']);
     }
 }

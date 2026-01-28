@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils'
 
 const items = [
   { label: 'Overview', href: '/dashboard/startup', icon: LayoutDashboard },
-  { label: 'Startup Profile', href: '/dashboard/startup/profile', icon: User },
+  { label: 'Startup Profile', href: '/dashboard/startup/startup_profile', icon: User },
   { label: 'Mentor Requests', href: '/dashboard/startup/mentor_request', icon: Users },
   { label: 'Messages', href: '/dashboard/startup/messages', icon: MessageSquare },
   { label: 'Notifications', href: '/dashboard/startup/notifications', icon: Bell },

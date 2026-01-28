@@ -79,11 +79,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Startup
     Route::get('/startups/me', [StartupController::class, 'myStartup']);
+   // trash routes
+    Route::get('/startups/trash', [StartupController::class, 'trash']);
+    Route::post('/startups/{startup}/restore', [StartupController::class, 'restore']);
+    Route::delete('/startups/{startup}/force', [StartupController::class, 'forceDelete']);
+
+    // Startup CRUD
     Route::post('/startups', [StartupController::class, 'store']);
     Route::put('/startups/{startup}', [StartupController::class, 'update']);
     Route::get('/startups/{startup}', [StartupController::class, 'show']);
     Route::get('/dashboard/overview', [DashboardController::class, 'overview']);
     Route::get('/my-startups-with-approved-mentors', [StartupController::class, 'myStartupsWithApprovedMentors']);
+    
+    // Soft delete startup (move to trash)
+    Route::delete('/startups/{startup}', [StartupController::class, 'destroy']);
+    
+
     // Mentor
     Route::get('/mentor/profile', [MentorController::class, 'show']);
     Route::post('/mentor/profile', [MentorController::class, 'storeOrUpdate']);
