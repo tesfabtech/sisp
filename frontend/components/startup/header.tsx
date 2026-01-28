@@ -55,7 +55,7 @@ export default function Header() {
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => router.push('/')}
-          className="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          className="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition currsor-pointer"
           title="Home"
         >
           <Home size={18} />

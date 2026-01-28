@@ -59,7 +59,7 @@ export default function HeroSection() {
 
             {/* Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 dark:text-white">
-              <span className="bg-linear-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-orange-600 to-blue-400 bg-clip-text text-transparent">
                 Empowering
               </span>{' '}
               Sidama&apos;s
@@ -77,7 +77,7 @@ export default function HeroSection() {
             {/* Buttons */}
             <div className="mt-8 flex flex-wrap gap-4">
               <Link href="/register/role">
-                <Button className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white shadow-md cursor-pointer">
+                <Button className="h-12 px-6 bg-orange-600 hover:bg-orange-700 text-white shadow-md cursor-pointer">
                   Register Now
                 </Button>
               </Link>

@@ -59,7 +59,7 @@ export default function StartupCarousel() {
   if (loading || startups.length === 0) return null;
 
   return (
-    <section className="relative py-28 bg-gray-100 dark:bg-[#0B1220] overflow-hidden">
+    <section id="startups" className="relative py-28 bg-gray-100 dark:bg-[#0B1220] overflow-hidden">
       <div className="absolute inset-0 dark:bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_60%)]" />
 
       <div className="relative max-w-7xl mx-auto px-6">
@@ -218,7 +218,7 @@ export default function StartupCarousel() {
 <div className="mt-14 text-center">
   <Link
     href="/startups"
-    className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:gap-3 transition-all cursor-pointer"
+    className="inline-flex items-center gap-2 text-orange-600 dark:text-orange-400 font-semibold hover:gap-3 transition-all cursor-pointer"
   >
     View All Startups
     <ArrowRight className="w-5 h-5" />

@@ -1,16 +1,20 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Bell, Sun, Moon, User } from 'lucide-react'
+import { Bell, Sun, Moon, User, Home } from 'lucide-react'
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import axios from '@/lib/axios'
+import router from 'next/dist/shared/lib/router/router'
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 
 export default function MentorHeader() {
   const [dark, setDark] = useState(false)
   const [user, setUser] = useState<{ first_name: string } | null>(null)
   const [profileImage, setProfileImage] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
@@ -62,9 +66,15 @@ export default function MentorHeader() {
 
       {/* Right */}
       <div className="flex items-center gap-3">
-        <div className="relative w-72">
-          <Input placeholder="Search mentorships..." />
-        </div>
+        {/* Home Button */}
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => router.push('/')}
+                  className="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+                  title="Home"
+                >
+                  <Home size={18} />
+                </motion.button>
 
         <button
           onClick={toggleTheme}

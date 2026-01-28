@@ -40,7 +40,7 @@ export default function MentorshipSection() {
   }, []);
 
   return (
-    <section className="relative py-28 overflow-hidden text-white">
+    <section id="mentorship" className="relative py-28 overflow-hidden text-white">
       {/* MODERATE GRADIENT BACKGROUND */}
       <div
         className="absolute inset-0 bg-linear-to-br 
@@ -83,7 +83,7 @@ export default function MentorshipSection() {
           viewport={{ once: true }}
           className="text-gray-900 dark:text-white"
         >
-          <Badge className="mb-6 bg-black/5 text-gray-800 border-black/10 dark:bg-white/15 dark:text-white dark:border-white/20">
+          <Badge className="mb-5 px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">
             Expert Mentorship
           </Badge>
 
@@ -125,7 +125,7 @@ export default function MentorshipSection() {
         <Link href="/register/role">
           <Button
             size="lg"
-            className="mt-10 bg-blue-600 text-white hover:bg-blue-700 dark:bg-white dark:text-blue-700 dark:hover:bg-white/90 font-semibold cursor-pointer"
+            className="mt-10 bg-orange-600 text-white hover:bg-white hover:text-orange-700 hover:border hover:border-orange-700 dark:bg-white dark:text-orange-700 dark:hover:text-white dark:hover:bg-orange-700 font-semibold cursor-pointer transition-all"
           >
             Signup as Mentor
             <ArrowRight className="ml-2 w-5 h-5" />

@@ -70,7 +70,7 @@ export default function FinalCTA() {
           <Link href="/register/role">
           <Button
             size="lg"
-            className="h-12 px-8 bg-white text-blue-700 hover:bg-white/90 font-semibold shadow-xl rounded-xl cursor-pointer"
+            className="h-12 px-8 bg-orange-600 hover:bg-orange-700 text-white font-semibold shadow-xl rounded-xl cursor-pointer"
           >
             Create Your Account
             <ArrowRight className="ml-2 w-5 h-5" />
