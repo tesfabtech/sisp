@@ -61,20 +61,4 @@ class User extends Authenticatable
     {
         return $this->hasOne(Organization::class);
     }
-
-// Added relationships for applications and registrations
-    public function challengeApplications()
-    {
-        return $this->hasMany(ChallengeApplication::class);
-    }
-
-    public function fundingApplications()
-    {
-        return $this->hasMany(FundingApplication::class);
-    }
-
-    public function eventRegistrations()
-    {
-        return $this->hasMany(EventRegistration::class);
-    }
 }

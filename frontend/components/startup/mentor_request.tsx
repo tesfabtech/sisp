@@ -146,7 +146,7 @@ export default function MentorRequest() {
             Select Startup
           </label>
           <select
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
             value={selectedStartup ?? ''}
             onChange={(e) => setSelectedStartup(Number(e.target.value))}
           >

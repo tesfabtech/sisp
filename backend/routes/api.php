@@ -24,6 +24,7 @@ use App\Http\Controllers\KnowledgeHubController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MentorOverviewController;
+use App\Http\Controllers\OrganizationOverviewController;
 
 /*
 |--------------------------------------------------------------------------

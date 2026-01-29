@@ -11,27 +11,18 @@ class ChallengeApplication extends Model
 
     protected $fillable = [
         'challenge_id',
-        'organization_id',
-        'user_id',
+        'startup_id',
+        'submission_link',
         'status',
     ];
-
-    /* =====================
-       Relationships
-    ===================== */
 
     public function challenge()
     {
         return $this->belongsTo(Challenge::class);
     }
 
-    public function organization()
+    public function startup()
     {
-        return $this->belongsTo(Organization::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Startup::class);
     }
 }
