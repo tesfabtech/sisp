@@ -113,12 +113,12 @@ const avatarUrl = avatar
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700 dark:text-gray-300">
-            <Link href="#home" className="hover:text-[#0066FF] transition">Home</Link>
-            <Link href="#startups" className="hover:text-[#0066FF] transition">Startups</Link>
-            <Link href="#opportunities" className="hover:text-[#0066FF] transition">Opportunities</Link>
-            <Link href="#knowledge" className="hover:text-[#0066FF] transition">Knowledge Hub</Link>
-            <Link href="#mentorship" className="hover:text-[#0066FF] transition">Mentorship</Link>
-            <Link href="#about" className="hover:text-[#0066FF] transition">About</Link>
+            <Link href="/#home" className="hover:text-[#0066FF] transition">Home</Link>
+            <Link href="/#startups" className="hover:text-[#0066FF] transition">Startups</Link>
+            <Link href="/#opportunities" className="hover:text-[#0066FF] transition">Opportunities</Link>
+            <Link href="/#knowledge" className="hover:text-[#0066FF] transition">Knowledge Hub</Link>
+            <Link href="/#mentorship" className="hover:text-[#0066FF] transition">Mentorship</Link>
+            <Link href="/about" className="hover:text-[#0066FF] transition">About</Link>
           </nav>
 
           {/* Actions */}
