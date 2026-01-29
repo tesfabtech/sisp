@@ -43,8 +43,26 @@ class Organization extends Model
         return $this->hasMany(Event::class);
     }
 
+
+    // Funding Opportunities created by the organization
+    
     public function fundingOpportunities()
     {
         return $this->hasMany(FundingOpportunity::class);
+    }
+
+    public function challengeApplications()
+    {
+        return $this->hasMany(ChallengeApplication::class);
+    }
+
+    public function fundingApplications()
+    {
+        return $this->hasMany(FundingApplication::class);
+    }
+
+    public function eventRegistrations()
+    {
+        return $this->hasMany(EventRegistration::class);
     }
 }
