@@ -24,6 +24,7 @@ use App\Http\Controllers\KnowledgeHubController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MentorOverviewController;
+use App\Http\Controllers\OrganizationOverviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -125,6 +126,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Profile Management
     Route::put('/admin/profile', [AdminProfileController::class, 'updateProfile']);
     Route::put('/admin/password', [AdminProfileController::class, 'updatePassword']);
+    Route::get('/organization/overview', [OrganizationOverviewController::class, 'index']);
 });
 
 

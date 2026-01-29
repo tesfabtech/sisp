@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import axios from "@/lib/axios";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -16,6 +17,24 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 /* ----------------------------------
+   TYPES
+----------------------------------- */
+
+type OverviewResponse = {
+  kpis: {
+    events: number;
+    challenges: number;
+    funding: number;
+    pending: number;
+  };
+  recent_activity: {
+    title: string;
+    created_at: string;
+    status: "approved" | "pending" | "rejected";
+  }[];
+};
+
+/* ----------------------------------
    KPI CARD
 ----------------------------------- */
 
@@ -23,27 +42,9 @@ interface KPICardProps {
   title: string;
   value: number;
   icon: React.ElementType;
-  trend?: { value: number; positive: boolean };
 }
 
-function KPICard({ title, value, icon: Icon, trend }: KPICardProps) {
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    let current = 0;
-    const step = value / 40;
-    const timer = setInterval(() => {
-      current += step;
-      if (current >= value) {
-        setDisplayValue(value);
-        clearInterval(timer);
-      } else {
-        setDisplayValue(Math.floor(current));
-      }
-    }, 20);
-    return () => clearInterval(timer);
-  }, [value]);
-
+function KPICard({ title, value, icon: Icon }: KPICardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -59,21 +60,9 @@ function KPICard({ title, value, icon: Icon, trend }: KPICardProps) {
           <p className="text-sm text-[#667085] dark:text-[#94A3B8]">
             {title}
           </p>
-
           <p className="text-3xl font-bold tabular-nums text-[#101828] dark:text-white">
-            {displayValue.toLocaleString()}
+            {value.toLocaleString()}
           </p>
-
-          {trend && (
-            <p
-              className={cn(
-                "text-xs font-medium",
-                trend.positive ? "text-[#14B8A6]" : "text-[#EF4444]"
-              )}
-            >
-              {trend.positive ? "↑" : "↓"} {trend.value}% from last month
-            </p>
-          )}
         </div>
 
         <div className="rounded-xl bg-[#3B82F6]/10 p-3 text-[#3B82F6]">
@@ -85,7 +74,7 @@ function KPICard({ title, value, icon: Icon, trend }: KPICardProps) {
 }
 
 /* ----------------------------------
-   QUICK ACTIONS
+   QUICK ACTIONS (UNCHANGED)
 ----------------------------------- */
 
 const quickActions = [
@@ -165,12 +154,6 @@ function QuickActions() {
    RECENT ACTIVITY
 ----------------------------------- */
 
-const activities = [
-  { title: "Tech Innovation Summit 2024", date: "2 hours ago", status: "approved" },
-  { title: "Green Energy Hackathon", date: "5 hours ago", status: "pending" },
-  { title: "Startup Seed Grant – Q1", date: "1 day ago", status: "rejected" },
-];
-
 const statusStyles = {
   approved: {
     label: "Approved",
@@ -189,67 +172,89 @@ const statusStyles = {
   },
 };
 
-function RecentActivity() {
-  return (
-    <section className="space-y-4">
-      <h2 className="text-lg font-semibold text-[#101828] dark:text-white">
-        Recent Activity
-      </h2>
-
-      <div className="overflow-hidden rounded-2xl border bg-white border-[#E4E7EC] dark:bg-[#101828] dark:border-[#1F2937]">
-        {activities.map((activity, i) => {
-          const status =
-            statusStyles[activity.status as keyof typeof statusStyles];
-          const StatusIcon = status.icon;
-
-          return (
-            <motion.div
-              key={activity.title}
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 + i * 0.05 }}
-              className="flex items-center justify-between px-6 py-4 hover:bg-[#F2F4F7] dark:hover:bg-white/5"
-            >
-              <div>
-                <p className="font-medium text-[#101828] dark:text-white">
-                  {activity.title}
-                </p>
-                <p className="text-sm text-[#667085] dark:text-[#94A3B8]">
-                  {activity.date}
-                </p>
-              </div>
-
-              <Badge
-                variant="outline"
-                className={cn("flex items-center gap-1 border-none", status.className)}
-              >
-                <StatusIcon className="h-3 w-3" />
-                {status.label}
-              </Badge>
-            </motion.div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
 /* ----------------------------------
    MAIN DASHBOARD
 ----------------------------------- */
 
 export default function OrganizationDashboard() {
+  const [data, setData] = useState<OverviewResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get('organization/overview')
+      .then((res) => setData(res.data.data))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <div className="px-6 py-8">Loading...</div>;
+  }
+
+  if (!data) {
+    return <div className="px-6 py-8">Failed to load dashboard.</div>;
+  }
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] dark:bg-[#0B1220] px-6 py-8 space-y-12">
+      {/* KPIs */}
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        <KPICard title="Total Events" value={24} icon={Calendar} trend={{ value: 12, positive: true }} />
-        <KPICard title="Challenges" value={8} icon={Trophy} trend={{ value: 25, positive: true }} />
-        <KPICard title="Funding Calls" value={15} icon={Wallet} trend={{ value: 8, positive: true }} />
-        <KPICard title="Pending Approvals" value={5} icon={Clock} />
+        <KPICard title="Total Events" value={data.kpis.events} icon={Calendar} />
+        <KPICard title="Challenges" value={data.kpis.challenges} icon={Trophy} />
+        <KPICard title="Funding Calls" value={data.kpis.funding} icon={Wallet} />
+        <KPICard title="Pending Approvals" value={data.kpis.pending} icon={Clock} />
       </div>
 
+      {/* Quick Actions */}
       <QuickActions />
-      <RecentActivity />
+
+      {/* Recent Activity */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-[#101828] dark:text-white">
+          Recent Activity
+        </h2>
+
+        <div className="overflow-hidden rounded-2xl border bg-white border-[#E4E7EC] dark:bg-[#101828] dark:border-[#1F2937]">
+          {data.recent_activity.length === 0 && (
+            <p className="px-6 py-4 text-sm text-muted-foreground">
+              No recent activity
+            </p>
+          )}
+
+          {data.recent_activity.map((activity, i) => {
+            const status =
+              statusStyles[activity.status as keyof typeof statusStyles];
+            const StatusIcon = status.icon;
+
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.05 * i }}
+                className="flex items-center justify-between px-6 py-4 hover:bg-[#F2F4F7] dark:hover:bg-white/5"
+              >
+                <div>
+                  <p className="font-medium text-[#101828] dark:text-white">
+                    {activity.title}
+                  </p>
+                  <p className="text-sm text-[#667085] dark:text-[#94A3B8]">
+                    {new Date(activity.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <Badge
+                  variant="outline"
+                  className={cn("flex items-center gap-1 border-none", status.className)}
+                >
+                  <StatusIcon className="h-3 w-3" />
+                  {status.label}
+                </Badge>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
