@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.only' => \App\Http\Middleware\AdminOnly::class,
             'superadmin.only' => \App\Http\Middleware\SuperAdminOnly::class,
+            'startup'          => \App\Http\Middleware\EnsureStartupUser::class,
         ]);
 
         // API middleware (no throttle)

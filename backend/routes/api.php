@@ -24,6 +24,10 @@ use App\Http\Controllers\KnowledgeHubController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MentorOverviewController;
+use App\Http\Controllers\FundingApplicationController;
+use App\Http\Controllers\EventApplicationController;
+use App\Http\Controllers\ChallengeApplicationController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -292,3 +296,37 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::delete('/funding/{id}/force', [AdminFundingController::class, 'forceDelete']);
     Route::patch('/funding/{id}/feature', [AdminFundingController::class, 'feature']);
 });
+// Application Routes for Startups
+Route::middleware(['auth:sanctum', 'startup'])->group(function () {
+    Route::post('/events/{id}/apply', [EventApplicationController::class, 'store']);
+    Route::post('/challenges/{id}/apply', [ChallengeApplicationController::class, 'store']);
+    Route::post('/fundings/{id}/apply', [FundingApplicationController::class, 'store']);
+});
+
+// Event Application Status
+Route::get('/events/{id}/application-status', function (Request $request, $id) {
+    return response()->json([
+        'applied' => \App\Models\EventRegistration::where('event_id', $id)
+            ->where('user_id', $request->user()->id)
+            ->exists()
+    ]);
+})->middleware(['auth:sanctum', 'startup']);
+
+
+// Challenge Application Status
+Route::get('/challenges/{id}/application-status', function (Request $request, $id) {
+    return response()->json([
+        'applied' => \App\Models\ChallengeApplication::where('challenge_id', $id)
+            ->where('user_id', $request->user()->id)
+            ->exists()
+    ]);
+})->middleware(['auth:sanctum', 'startup']);
+
+// Funding Application Status
+Route::get('/fundings/{id}/application-status', function (Request $request, $id) {
+    return response()->json([
+        'applied' => \App\Models\FundingApplication::where('funding_id', $id)
+            ->where('user_id', $request->user()->id)
+            ->exists()
+    ]);
+})->middleware(['auth:sanctum', 'startup']);

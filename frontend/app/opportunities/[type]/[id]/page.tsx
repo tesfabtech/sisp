@@ -35,6 +35,13 @@ type Opportunity = {
   organization: Organization;
 };
 
+
+const endpointMap: Record<string, string> = {
+  event: 'events',
+  challenge: 'challenges',
+  funding: 'fundings',
+};
+
 /* =========================
    SKELETON (NO STRUCTURE CHANGE)
 ========================= */
@@ -97,16 +104,91 @@ function OpportunitySkeleton() {
    PAGE
 ========================= */
 export default function OpportunityDetailPage() {
-  const { type, id } = useParams();
-  const [data, setData] = useState<Opportunity | null>(null);
+  const params = useParams();
   const router = useRouter();
+
+  const type = params.type as 'event' | 'funding' | 'challenge';
+  const id = params.id as string;
+
+  const [data, setData] = useState<Opportunity | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [applied, setApplied] = useState(false);
+  const [loadingApply, setLoadingApply] = useState(false);
 
   useEffect(() => {
     if (!type || !id) return;
     axios.get(`/opportunities/${type}/${id}`).then(res => setData(res.data));
   }, [type, id]);
 
-  /* 🔥 ONLY CHANGE: skeleton instead of text */
+  useEffect(() => {
+  const storedUser = localStorage.getItem('user');
+  const token = localStorage.getItem('token');
+
+  if (!storedUser || !token) {
+    setUser(null);
+    return;
+  }
+
+  setUser(JSON.parse(storedUser));
+}, []);
+
+
+  useEffect(() => {
+  if (!user || user.role !== 'startup') return;
+
+  const token = localStorage.getItem('token');
+
+  axios
+    .get(
+      `/opportunities/${type}/${id}/application-status`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(res => setApplied(res.data.applied))
+    .catch(() => setApplied(false));
+}, [user, type, id]);
+
+
+  const handleApply = async () => {
+  if (!user) {
+    router.push('/login');
+    return;
+  }
+
+  if (user.role !== 'startup') {
+    router.push('/register/role');
+    return;
+  }
+
+  try {
+    setLoadingApply(true);
+
+    const token = localStorage.getItem('token');
+
+    await axios.post(
+      `/${endpointMap[type]}/${id}/apply`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setApplied(true);
+  } catch (error: any) {
+    if (error.response?.status === 409) {
+      setApplied(true);
+    }
+  } finally {
+    setLoadingApply(false);
+  }
+};
+
+
   if (!data) return <OpportunitySkeleton />;
 
   return (
@@ -141,8 +223,26 @@ export default function OpportunityDetailPage() {
             </p>
 
             <div className="flex gap-4">
-              <button className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-medium">
-                Apply Now
+              <button
+                onClick={handleApply}
+                disabled={applied || loadingApply}
+                className={`px-6 py-2 rounded-lg text-sm font-medium transition
+                  ${
+                    applied
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }
+                `}
+              >
+                {applied
+                  ? 'Application Submitted'
+                  : loadingApply
+                    ? 'Applying...'
+                    : user
+                      ? user.role === 'startup'
+                        ? 'Apply Now'
+                        : 'Complete Startup Registration'
+                      : 'Login to Apply'}
               </button>
             </div>
           </div>
