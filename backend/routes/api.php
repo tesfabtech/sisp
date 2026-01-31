@@ -294,3 +294,25 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::delete('/funding/{id}/force', [AdminFundingController::class, 'forceDelete']);
     Route::patch('/funding/{id}/feature', [AdminFundingController::class, 'feature']);
 });
+
+
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post(
+        '/opportunities/events/{event}/apply',
+        [\App\Http\Controllers\EventApplicationController::class, 'store']
+    );
+
+    Route::post(
+        '/opportunities/fundings/{funding}/apply',
+        [\App\Http\Controllers\FundingApplicationController::class, 'store']
+    );
+
+    Route::post(
+        '/opportunities/challenges/{challenge}/apply',
+        [\App\Http\Controllers\ChallengeApplicationController::class, 'store']
+    );
+});
